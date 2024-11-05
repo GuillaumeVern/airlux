@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - nat
+  fastapi:
+    build:
+      context: ./public-server/airnet-api
+      dockerfile: Dockerfile
+    container_name: fastapi
+    ports:
+      - 8000:8000
+    volumes:
+      - fastapi_data:/app
+    networks:
+      - public_server
+  mysql_db:
+    image: mysql:5.7
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: airlux
+      MYSQL_USER: airlux
+      MYSQL_PASSWORD: airlux
+    ports:
+      - 3306:3306
+    networks:
+      - public_server
+  timeseries_db:
+    image: influxdb:1.8
+    container_name: timeseries_db
+    ports:
+      - 8086:8086
+    networks:
+      - public_server
+  traefik:
+    image: "traefik:v3.2"
+    container_name: "traefik"
+    command:
+      #- "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entryPoints.web.address=:80"
+    ports:
+      - "8081:80"
+      - "8082:8080"
+    volumes:
+      - traefik_data:/etc/traefik
+
+
+volumes:
+  rabbitmq_data:
+    driver: local
+  fastapi_data:
+    driver: local
+  traefik_data:
+    driver: local
+
+
+
+networks:
+  public_server:
+    driver: bridge
+  nat:
+    driver: bridge
+  
