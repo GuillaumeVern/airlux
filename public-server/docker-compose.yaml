@@ -1,0 +1,91 @@
+version: '3.8'
+
+services:
+  mysql-db:
+    image: mysql:5.7
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: airlux
+      MYSQL_USER: airlux
+      MYSQL_PASSWORD: airlux
+    ports:
+      - 3306:3306
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - public_server
+  timeseries-db:
+    image: influxdb:1.8
+    container_name: timeseries-db
+    ports:
+      - 8086:8086
+    volumes:
+      - timeseries_data:/var/lib/influxdb
+    networks:
+      - public_server
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.timeseries-db.rule=Host(`timeseries-db.localhost`)"
+      - "traefik.http.routers.timeseries-db.entrypoints=timeseries"
+  reverse-proxy:
+    image: "traefik:v3.2"
+    container_name: "reverse-proxy"
+    command:
+      #- "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entryPoints.web.address=:80"
+      - "--entryPoints.timeseries.address=:8086"
+    ports:
+      - "8081:80"
+      - "8082:8080"
+    volumes:
+      - reverse-proxy_data:/etc/traefik
+      - /var/run/docker.sock:/var/run/docker.sock
+  airnet-api:
+    build:
+      context: ./airnet-api
+      dockerfile: Dockerfile
+    container_name: airnet-api
+    ports:
+      - 8000:8000
+    volumes:
+      - airnet-api_data:/app
+    networks:
+      - public_server
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.airnet-api.rule=Host(`airnet-api.localhost`)"
+      - "traefik.http.routers.airnet-api.entrypoints=web"
+  airnet-private-server:
+    build:
+      context: ./airnet-api
+      dockerfile: Dockerfile
+    container_name: airnet-private-server
+    ports:
+      - 8001:8000
+    volumes:
+      - airnet-private-server_data:/app
+    networks:
+      - public_server
+
+volumes:
+  airnet-api_data:
+    driver: local
+  airnet-private-server_data:
+    driver: local
+  reverse-proxy_data:
+    driver: local
+  mysql_data:
+    driver: local
+  timeseries_data:
+    driver: local
+
+
+
+networks:
+  public_server:
+    driver: bridge
+  
