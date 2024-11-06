@@ -27,7 +27,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.timeseries-db.rule=Host(`timeseries-db.localhost`)"
-      - "traefik.http.routers.timeseries-db.entrypoints=timeseries"
+      - "traefik.http.routers.timeseries-db.entrypoints=web"
   reverse-proxy:
     image: "traefik:v3.2"
     container_name: "reverse-proxy"
@@ -37,13 +37,14 @@ services:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entryPoints.web.address=:80"
-      - "--entryPoints.timeseries.address=:8086"
     ports:
-      - "8081:80"
+      - "80:80"
       - "8082:8080"
     volumes:
       - reverse-proxy_data:/etc/traefik
       - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - public_server
   airnet-api:
     build:
       context: ./airnet-api
