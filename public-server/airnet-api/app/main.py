@@ -2,12 +2,25 @@ from typing import Union
 
 from fastapi import FastAPI
 
+import mysql.connector
+
 app = FastAPI()
 
+db = mysql.connector.connect(
+  host="localhost",
+  user="airlux",
+  password="airlux",
+  database="airlux"
+)
 
-@app.get("/")
+
+
+@app.get("/raspberry")
 def read_root():
-    return {"Hello": "World"}
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM Raspberry")
+    result = cursor.fetchall()
+    return result
 
 
 @app.get("/items/{item_id}")

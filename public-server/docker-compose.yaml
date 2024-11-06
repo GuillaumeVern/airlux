@@ -46,35 +46,31 @@ services:
     networks:
       - public_server
   airnet-api:
-    build:
-      context: ./airnet-api
-      dockerfile: Dockerfile
+    image: python:3.13
     container_name: airnet-api
     ports:
       - 8000:8000
     volumes:
-      - airnet-api_data:/app
+      - ./airnet-api/:/app
     networks:
       - public_server
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.airnet-api.rule=Host(`airnet-api.localhost`)"
       - "traefik.http.routers.airnet-api.entrypoints=web"
+    entrypoint: ["sh", "-c", "pip install -r /app/requirements.txt && fastapi run /app/app/main.py --host 0.0.0.0 --port 8000"]
   airnet-private-server:
-    build:
-      context: ./airnet-api
-      dockerfile: Dockerfile
+    image: python:3.13
     container_name: airnet-private-server
     ports:
       - 8001:8000
     volumes:
-      - airnet-private-server_data:/app
+      - ./airnet-api/:/app
     networks:
       - public_server
+    entrypoint: ["sh", "-c", "pip install -r /app/requirements.txt && fastapi run /app/app/main.py --host 0.0.0.0 --port 8000"]
 
 volumes:
-  airnet-api_data:
-    driver: local
   airnet-private-server_data:
     driver: local
   reverse-proxy_data:

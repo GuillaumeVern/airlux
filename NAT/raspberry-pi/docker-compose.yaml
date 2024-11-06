@@ -2,18 +2,10 @@ version: '3.8'
 
 services:  
   mqtt-broker:
-    build:
-      context: ./MQTT-broker
-      dockerfile: Dockerfile
+    image: eclipse-mosquitto:2.0.20
     container_name: mqtt-broker
     ports:
       - "1883:2883"
       - "9001:9001"
     volumes:
-      - mosquitto_data:/mosquitto
-
-
-
-volumes:
-  mosquitto_data:
-    driver: local
+      - ./mosquitto:/mosquitto
