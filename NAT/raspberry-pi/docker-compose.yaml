@@ -3,9 +3,48 @@ version: '3.8'
 services:  
   mqtt-broker:
     image: eclipse-mosquitto:2.0.20
+    restart: always
     container_name: mqtt-broker
+    healthcheck:
+      test: ["CMD", "mosquitto_sub", "-t", "$$SYS/#", "-C", "1", "-i", "healthcheck", "-W", "3", "-h", "127.0.0.1", "-p", "1880"]
+      interval: 10s
+      timeout: 10s
+      retries: 6
     ports:
-      - "1883:2883"
+      - "1883:1883"
       - "9001:9001"
     volumes:
-      - ./mosquitto:/mosquitto
+      - type: bind
+        source: ./MQTT-broker/mosquitto/
+        target: /mosquitto
+  redis-cache:
+    image: redis:6.2-alpine
+    restart: always
+    container_name: redis-cache
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 --loglevel debug
+    volumes: 
+      - redis-cache:/data
+  redis-insight:
+    image: redislabs/redisinsight:latest
+    container_name: redis-insight
+    ports:
+      - '5540:5540'
+    environment:
+      - REDISINSIGHT_REDIS_URI=redis://redis-cache:6379
+  simulate:
+    image: node:18.17-alpine
+    container_name: simulate
+    working_dir: /app
+    volumes:
+      - ../esp32-devices/simulate:/app
+    command: sh -c "yarn && node index.js"
+    depends_on:
+      mqtt-broker:
+        condition: service_healthy
+
+volumes:
+  redis-cache:
+    driver: local
+    name: redis-cache

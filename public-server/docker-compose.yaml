@@ -16,12 +16,19 @@ services:
     networks:
       - public_server
   timeseries-db:
-    image: influxdb:1.8
+    image: influxdb:2.1
     container_name: timeseries-db
     ports:
       - 8086:8086
     volumes:
-      - timeseries_data:/var/lib/influxdb
+      - timeseries_data:/var/lib/influxdb2
+      - timeseries_config:/etc/influxdb2
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_ORG: docs
+      DOCKER_INFLUXDB_INIT_BUCKET: home
+      DOCKER_INFLUXDB_INIT_USERNAME: airlux
+      DOCKER_INFLUXDB_INIT_PASSWORD: airluxpassword
     networks:
       - public_server
     labels:
@@ -69,7 +76,7 @@ services:
     networks:
       - public_server
     entrypoint: ["sh", "-c", "pip install -r /app/requirements.txt && fastapi run /app/app/main.py --host 0.0.0.0 --port 8000"]
-
+  
 volumes:
   airnet-private-server_data:
     driver: local
@@ -78,6 +85,8 @@ volumes:
   mysql_data:
     driver: local
   timeseries_data:
+    driver: local
+  timeseries_config:
     driver: local
 
 

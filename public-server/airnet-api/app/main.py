@@ -13,7 +13,7 @@ class Raspberry(BaseModel):
 app = FastAPI()
 
 db = mysql.connector.connect(
-  host="localhost",
+  host="mysql-db",
   user="airlux",
   password="airlux",
   database="airlux"
