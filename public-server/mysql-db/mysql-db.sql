@@ -1,18 +1,16 @@
 CREATE TABLE Raspberry(
-   Id_Raspberry INT AUTO_INCREMENT,
    Adresse_MAC VARCHAR(17) ,
    Adresse_ip VARCHAR(16)  NOT NULL,
-   Pub_Key TEXT NOT NULL,
-   PRIMARY KEY(Id_Raspberry),
-   UNIQUE(Adresse_ip),
-   UNIQUE(Pub_Key)
+   Pub_Key LONGTEXT NOT NULL,
+   PRIMARY KEY(Adresse_MAC),
+   UNIQUE(Adresse_ip)
 );
 
 CREATE TABLE Device(
    Id_Device INT AUTO_INCREMENT,
-   Id_Raspberry INT NOT NULL,
+   Adresse_MAC VARCHAR(17)  NOT NULL,
    PRIMARY KEY(Id_Device),
-   FOREIGN KEY(Id_Raspberry) REFERENCES Raspberry(Id_Raspberry)
+   FOREIGN KEY(Adresse_MAC) REFERENCES Raspberry(Adresse_MAC)
 );
 
 CREATE TABLE Type_Device(
@@ -25,10 +23,8 @@ CREATE TABLE Type_Device(
 CREATE TABLE Service(
    Id_Service INT AUTO_INCREMENT,
    Libelle VARCHAR(50)  NOT NULL,
-   Port INT,
    PRIMARY KEY(Id_Service),
-   UNIQUE(Libelle),
-   UNIQUE(Port)
+   UNIQUE(Libelle)
 );
 
 CREATE TABLE Device_has_Type(
@@ -40,9 +36,12 @@ CREATE TABLE Device_has_Type(
 );
 
 CREATE TABLE Raspberry_has_Service(
-   Id_Raspberry INT,
+   Adresse_MAC VARCHAR(17) ,
    Id_Service INT,
-   PRIMARY KEY(Id_Raspberry, Id_Service),
-   FOREIGN KEY(Id_Raspberry) REFERENCES Raspberry(Id_Raspberry),
+   Port INT,
+   url VARCHAR(50) ,
+   PRIMARY KEY(Adresse_MAC, Id_Service),
+   UNIQUE(Port),
+   FOREIGN KEY(Adresse_MAC) REFERENCES Raspberry(Adresse_MAC),
    FOREIGN KEY(Id_Service) REFERENCES Service(Id_Service)
 );

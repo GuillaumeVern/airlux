@@ -6,9 +6,9 @@ import mysql.connector
 
 
 class Raspberry(BaseModel):
-    Adresse_MAC: str | None = None
+    Adresse_MAC: str
     Adresse_ip: str
-    Pub_Key: str | None = None
+    Pub_Key: str
 
 app = FastAPI()
 
@@ -28,23 +28,22 @@ def read_root():
     result = cursor.fetchall()
     return result
 
-@app.get("/raspberry/{id}")
-def read_root(id: int):
+@app.get("/raspberry/{mac}")
+def read_root(mac: str):
     cursor = db.cursor()
-    cursor.execute("SELECT * FROM Raspberry WHERE Id_Raspberry = %s", (id,))
+    cursor.execute("SELECT * FROM Raspberry WHERE Adresse_MAC = %s", (mac,))
     result = cursor.fetchall()
     if (len(result) == 0):
-        return "No Raspberry found with this id"
+        return false
     return result[0]
 
 @app.post("/raspberry")
 def create_raspberry(raspberry: Raspberry):
-    cursor = db.cursor()
-    cursor.execute("INSERT INTO Raspberry (Adresse_MAC, Adresse_ip, Pub_Key) VALUES (%s, %s, %s)", (raspberry.Adresse_MAC, raspberry.Adresse_ip, raspberry.Pub_Key))
-    db.commit()
-    return
+    try:
+        cursor = db.cursor()
+        cursor.execute("INSERT INTO Raspberry (Adresse_MAC, Adresse_ip, Pub_Key) VALUES (%s, %s, %s)", (raspberry.Adresse_MAC, raspberry.Adresse_ip, raspberry.Pub_Key))
+        db.commit()
+        return JSONResponse(content={"message": "Raspberry created successfully"}, status_code=201)
+    except Exception as e:
+        return JSONResponse(content={"message": e}, status_code=500)
 
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}

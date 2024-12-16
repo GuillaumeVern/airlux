@@ -1,6 +1,0 @@
-influxdb-cxx*
-paho.mqtt.cpp*
-redis*
-cpp-httplib*
-CMakeCache.txt
-CMakeFiles
