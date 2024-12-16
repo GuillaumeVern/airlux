@@ -33,13 +33,15 @@ services:
       - '5540:5540'
     environment:
       - REDISINSIGHT_REDIS_URI=redis://redis-cache:6379
-  simulate:
-    image: node:18.17-alpine
-    container_name: simulate
-    working_dir: /app
-    volumes:
-      - ../esp32-devices/simulate:/app
-    command: sh -c "yarn && node index.js"
+  simulator:
+    build: ../esp32-devices/simulation
+    environment:
+      MQTT_BROKER_URL: mqtt://mqtt-broker:1883
+      DATA_FREQUENCY: ${DATA_FREQUENCY:-5000}
+      SENSOR_COUNT: ${SENSOR_COUNT:-4}
+      MQTT_QOS: ${MQTT_QOS:-0}
+    env_file:
+    - ../esp32-devices/simulation/.env
     depends_on:
       mqtt-broker:
         condition: service_healthy
