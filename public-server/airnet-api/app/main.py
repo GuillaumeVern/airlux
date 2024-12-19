@@ -36,7 +36,7 @@ def get_raspberry(mac: str):
     cursor.execute("SELECT * FROM Raspberry JOIN Ping ON Ping.Adresse_MAC = Raspberry.Adresse_MAC JOIN Raspberry_has_Service ON Raspberry.Adresse_MAC = Raspberry_has_Service.Adresse_MAC JOIN Service ON Raspberry_has_Service.Id_Service = Service.Id_Service WHERE Raspberry.Adresse_MAC = %s", (mac,))
     result = cursor.fetchall()
     if (len(result) == 0):
-        return false
+        return False
     return result[0]
 
 def get_free_port():
