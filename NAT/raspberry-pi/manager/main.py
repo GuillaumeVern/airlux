@@ -2,10 +2,14 @@ from paho.mqtt import client as mqtt_client
 import random
 import time
 import logging
+from influxdb_client import InfluxDBClient
 BROKER = 'mqtt-broker'
 PORT = 1883
 TOPIC = "raspberry"
 CLIENT_ID = f'python-mqtt-{random.randint(0, 1000)}'
+
+INFLUXDB_URL = 'http://localhost:8086'
+INFLUXDB_TOKEN = 'QWt9zTU7bUO6y1-J07voSe5vrugx7vKgYEXutKlnaa4CmuQHvl6nEFxjZeV32sirnCa5ZjlGYoAy3FwFYfcQ2w=='
 # username = 'emqx'
 # password = 'public'
 
@@ -63,9 +67,12 @@ def subscribe_to_all(client: mqtt_client):
 
 
 
-client = connect_mqtt()
-client.loop_start()
-subscribe_to_all(client)
+mqtt_client = connect_mqtt()
+mqtt_client.loop_start()
+subscribe_to_all(mqtt_client)
+
+inf_client = InfluxDBClient()
+print('test', inf_client.health().status)
 
 
 

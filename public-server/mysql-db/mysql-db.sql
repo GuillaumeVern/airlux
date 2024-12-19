@@ -1,3 +1,7 @@
+CREATE DATABASE IF NOT EXISTS `airlux`;
+USE `airlux`;
+
+
 CREATE TABLE Raspberry(
    Adresse_MAC VARCHAR(17) ,
    Adresse_ip VARCHAR(16)  NOT NULL,

@@ -13,10 +13,11 @@ services:
       - 3306:3306
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./mysql-db/mysql-db.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - public_server
   timeseries-db:
-    image: influxdb:2.1
+    image: influxdb:2.2
     container_name: timeseries-db
     ports:
       - 8086:8086
@@ -66,6 +67,8 @@ services:
       - "traefik.http.routers.airnet-api.rule=Host(`airnet-api.localhost`)"
       - "traefik.http.routers.airnet-api.entrypoints=web"
     entrypoint: ["sh", "-c", "pip install -r /app/requirements.txt && fastapi run /app/app/main.py --host 0.0.0.0 --port 8000"]
+    depends_on:
+      - airnet-private-server
   airnet-private-server:
     image: python:3.13
     container_name: airnet-private-server
@@ -76,6 +79,8 @@ services:
     networks:
       - public_server
     entrypoint: ["sh", "-c", "pip install -r /app/requirements.txt && fastapi run /app/app/main.py --host 0.0.0.0 --port 8000"]
+    depends_on:
+      - mysql-db
   
 volumes:
   airnet-private-server_data:
