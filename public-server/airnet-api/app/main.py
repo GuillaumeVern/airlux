@@ -59,9 +59,17 @@ def get_free_port():
 def get_port(mac: str):
     cursor = db.cursor()
     cursor.execute("SELECT Remote_Port FROM Raspberry WHERE Adresse_MAC = %s LIMIT 1", (mac,))
-    result = cursor.fetchone()
-    print(result)
-    return JSONResponse(content={"port": result}, status_code=200)
+    result = cursor.fetchall()
+    
+    if (len(result) == 0):
+        mac = mac.replace(":", "-")
+        cursor.execute("SELECT Remote_Port FROM Raspberry WHERE Adresse_MAC = %s LIMIT 1", (mac,))
+        result = cursor.fetchall()
+
+    if (len(result) == 0):
+        return JSONResponse(content={"message": "Raspberry not found"}, status_code=404)
+
+    return JSONResponse(content={"port": result[0][0]}, status_code=200)
 
 @app.post("/raspberry")
 def create_raspberry(raspberry: Raspberry, request: Request):
