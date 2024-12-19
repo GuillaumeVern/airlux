@@ -1,5 +1,5 @@
 from typing import Union
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from pydantic import BaseModel
 import requests
 from fastapi.responses import JSONResponse
@@ -9,7 +9,6 @@ import mysql.connector
 
 class Raspberry(BaseModel):
     Adresse_MAC: str
-    Adresse_ip: str
     Pub_Key: str
 
 app = FastAPI()
@@ -40,10 +39,10 @@ def read_root(mac: str):
     return result[0]
 
 @app.post("/raspberry")
-def create_raspberry(raspberry: Raspberry):
+def create_raspberry(raspberry: Raspberry, request: Request):
     try:
         cursor = db.cursor()
-        cursor.execute("INSERT INTO Raspberry (Adresse_MAC, Adresse_ip) VALUES (%s, %s)", (raspberry.Adresse_MAC, raspberry.Adresse_ip))
+        cursor.execute("INSERT INTO Raspberry (Adresse_MAC, Adresse_ip) VALUES (%s, %s)", (raspberry.Adresse_MAC, request.client.host))
         db.commit()
 
         # enregistrement de la clé publique
