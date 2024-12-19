@@ -3,6 +3,7 @@ from fastapi import FastAPI, Request
 from pydantic import BaseModel
 import requests
 from fastapi.responses import JSONResponse
+from random import randint
 
 import mysql.connector
 
@@ -38,11 +39,29 @@ def read_root(mac: str):
         return false
     return result[0]
 
+def get_free_port():
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM Raspberry")
+    result = cursor.fetchall()
+    port = randint(10000, 20000)
+
+    # on vérifie que le port n'est pas deja pris, très lent mais bon... ¯\_(ツ)_/¯ 
+    i = 0
+    while i < len(result):
+        if result[i][2] == port:
+            port = randint(10000, 20000)
+            i = 0
+        i += 1
+
+    return port
+
+
 @app.post("/raspberry")
 def create_raspberry(raspberry: Raspberry, request: Request):
     try:
         cursor = db.cursor()
-        cursor.execute("INSERT INTO Raspberry (Adresse_MAC, Adresse_ip) VALUES (%s, %s)", (raspberry.Adresse_MAC, request.client.host))
+        port = get_free_port()
+        cursor.execute("INSERT INTO Raspberry (Adresse_MAC, Adresse_ip, Remote_Port) VALUES (%s, %s, %s)", (raspberry.Adresse_MAC, request.client.host, port))
         db.commit()
 
         # enregistrement de la clé publique

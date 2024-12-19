@@ -7,6 +7,7 @@ echo "Clé publique: $RSA"
 apk update
 apk add curl
 
+
 curl -X POST -H "Content-Type: application/json" -d "{\"Adresse_MAC\":\"$MAC\", \"Pub_Key\": \"$RSA\"}" http://212.83.130.156:8000/raspberry
 
 echo "Raspberry-pi enregistré"
