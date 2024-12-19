@@ -33,7 +33,7 @@ def read_root():
 @app.get("/raspberry/{mac}")
 def read_root(mac: str):
     cursor = db.cursor()
-    cursor.execute("SELECT * FROM Raspberry WHERE Adresse_MAC = %s", (mac,))
+    cursor.execute("SELECT * FROM Raspberry JOIN Ping ON Ping.Adresse_MAC = Raspberry.Adresse_MAC JOIN Raspberry_has_Service ON Raspberry.Adresse_MAC = Raspberry_has_Service.Adresse_MAC JOIN Service ON Raspberry_has_Service.Id_Service = Service.Id_Service WHERE Adresse_MAC = %s", (mac,))
     result = cursor.fetchall()
     if (len(result) == 0):
         return false
@@ -45,8 +45,12 @@ def create_raspberry(raspberry: Raspberry):
         cursor = db.cursor()
         cursor.execute("INSERT INTO Raspberry (Adresse_MAC, Adresse_ip) VALUES (%s, %s)", (raspberry.Adresse_MAC, raspberry.Adresse_ip))
         db.commit()
+
+        # enregistrement de la clé publique
         requests.post("http://airnet-private-server:7880/keys", json={"key": raspberry.Pub_Key})
+
         return JSONResponse(content={"message": "Raspberry created successfully"}, status_code=201)
     except Exception as e:
         return JSONResponse(content={"message": e}, status_code=500)
+
 

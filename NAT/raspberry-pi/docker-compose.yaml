@@ -17,6 +17,16 @@ services:
       - type: bind
         source: ./MQTT-broker/mosquitto/
         target: /mosquitto
+  home-assistant:
+    image: homeassistant/home-assistant:2024.12
+    container_name: home-assistant
+    restart: always
+    ports:
+      - "8123:8123"
+    volumes:
+      - ./home-assistant:/config
+    environment:
+      - TZ=Europe/Paris
   redis-cache:
     image: redis:6.2-alpine
     restart: always
