@@ -60,7 +60,7 @@ def get_port(mac: str):
     cursor = db.cursor()
     cursor.execute("SELECT Remote_Port FROM Raspberry WHERE Adresse_MAC = %s LIMIT 1", (mac,))
     result = cursor.fetchall()
-    
+
     if (len(result) == 0):
         mac = mac.replace(":", "-")
         cursor.execute("SELECT Remote_Port FROM Raspberry WHERE Adresse_MAC = %s LIMIT 1", (mac,))
@@ -73,6 +73,8 @@ def get_port(mac: str):
 
 @app.post("/raspberry")
 def create_raspberry(raspberry: Raspberry, request: Request):
+    if get_raspberry(raspberry.Adresse_MAC) != False:
+        return JSONResponse(content={"message": "Raspberry already exists"}, status_code=409)
     try:
         cursor = db.cursor()
         port = get_free_port()
