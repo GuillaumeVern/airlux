@@ -24,14 +24,14 @@ db = mysql.connector.connect(
 
 
 @app.get("/raspberry")
-def read_root():
+def get_raspberries():
     cursor = db.cursor()
     cursor.execute("SELECT * FROM Raspberry")
     result = cursor.fetchall()
     return result
 
 @app.get("/raspberry/{mac}")
-def read_root(mac: str):
+def get_raspberry(mac: str):
     cursor = db.cursor()
     cursor.execute("SELECT * FROM Raspberry JOIN Ping ON Ping.Adresse_MAC = Raspberry.Adresse_MAC JOIN Raspberry_has_Service ON Raspberry.Adresse_MAC = Raspberry_has_Service.Adresse_MAC JOIN Service ON Raspberry_has_Service.Id_Service = Service.Id_Service WHERE Adresse_MAC = %s", (mac,))
     result = cursor.fetchall()
@@ -55,6 +55,13 @@ def get_free_port():
 
     return port
 
+@app.get("/raspberry/{mac}/port")
+def get_port(mac: str):
+    cursor = db.cursor()
+    cursor.execute("SELECT Remote_Port FROM Raspberry WHERE Adresse_MAC = %s LIMIT 1", (mac,))
+    result = cursor.fetchone()
+    print(result)
+    return JSONResponse(content={"port": result}, status_code=200)
 
 @app.post("/raspberry")
 def create_raspberry(raspberry: Raspberry, request: Request):
