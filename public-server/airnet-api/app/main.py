@@ -1,6 +1,8 @@
 from typing import Union
 from fastapi import FastAPI
 from pydantic import BaseModel
+import requests
+from fastapi.responses import JSONResponse
 
 import mysql.connector
 
@@ -41,8 +43,9 @@ def read_root(mac: str):
 def create_raspberry(raspberry: Raspberry):
     try:
         cursor = db.cursor()
-        cursor.execute("INSERT INTO Raspberry (Adresse_MAC, Adresse_ip, Pub_Key) VALUES (%s, %s, %s)", (raspberry.Adresse_MAC, raspberry.Adresse_ip, raspberry.Pub_Key))
+        cursor.execute("INSERT INTO Raspberry (Adresse_MAC, Adresse_ip) VALUES (%s, %s)", (raspberry.Adresse_MAC, raspberry.Adresse_ip))
         db.commit()
+        requests.post("http://airnet-private-server:7880/keys", json={"key": raspberry.Pub_Key})
         return JSONResponse(content={"message": "Raspberry created successfully"}, status_code=201)
     except Exception as e:
         return JSONResponse(content={"message": e}, status_code=500)
