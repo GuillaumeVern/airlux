@@ -10,7 +10,7 @@ class Key(BaseModel):
 
 def create_file_if_not_exists():
     try:
-        with open("keys.txt", "x") as f:
+        with open("/config/.ssh/authorized_keys", "x") as f:
             f.write("")
     except:
         pass
@@ -20,8 +20,17 @@ def create_file_if_not_exists():
 def add_key(key: Key):
     try:
         create_file_if_not_exists()
-        with open("keys.txt", "a") as f:
+        with open("/config/.ssh/authorized_keys", "a") as f:
             f.write(key.key + "\n")
         return JSONResponse(content={"message": "Key added successfully"}, status_code=201)
+    except Exception as e:
+        return JSONResponse(content={"message": e}, status_code=500)
+
+@app.get("/key")
+def get_key():
+    try:
+        with open("/config/ssh_host_keys/ssh_host_key.pub", "r") as f:
+            key = f.read()
+        return JSONResponse(content={"key": key}, status_code=200)
     except Exception as e:
         return JSONResponse(content={"message": e}, status_code=500)

@@ -61,8 +61,10 @@ services:
     volumes:
       - ./airnet-api/:/app
     networks:
+      - default
       - public_server
       - private_server
+      - dev
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.airnet-api.rule=Host(`airnet-api.localhost`)"
@@ -77,11 +79,42 @@ services:
       - 7880:7880
     volumes:
       - ./airnet-private-server/:/app
+      - ./.ssh/:/config/.ssh # le fichier authorized_keys utilisé par le serveur ssh
+      - ./ssh_host_keys/:/config/ssh_host_keys # les clés du serveur ssh
     networks:
       - private_server
     entrypoint: ["sh", "-c", "pip install -r /app/requirements.txt && fastapi run /app/main.py --host 0.0.0.0 --port 7880"]
     depends_on:
       - mysql-db
+  openssh-server:
+    image: linuxserver/openssh-server
+    container_name: openssh-server
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+      - PASSWORD_ACCESS=false
+      - SUDO_ACCESS=false
+      - PUBLIC_KEY_AUTH=true
+    ports:
+      - 2222:2222
+    networks:
+      - public_server
+      - private_server
+      - dev
+    volumes:
+      - ssh_config:/config  
+      - ./.ssh:/config/.ssh
+      - ./ssh_host_keys/:/config/ssh_host_keys
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.openssh-server.rule=Host(`openssh-server.localhost`)"
+      - "traefik.http.routers.openssh-server.entrypoints=web"
+    restart: unless-stopped
+    depends_on:
+      - airnet-private-server
+      - airnet-api
+      - reverse-proxy
   
 volumes:
   airnet-private-server_data:
@@ -94,6 +127,8 @@ volumes:
     driver: local
   timeseries_config:
     driver: local
+  ssh_config:
+    driver: local
 
 
 
@@ -101,5 +136,7 @@ networks:
   public_server:
     driver: bridge
   private_server:
+    driver: bridge
+  dev:
     driver: bridge
   

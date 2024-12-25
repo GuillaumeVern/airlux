@@ -5,26 +5,37 @@ apk add --no-cache jq
 apk add --no-cache openrc
 
 rc-update add sshd
-rc-service sshd start
+echo "n" | ssh-keygen -t rsa -b 4096 -f /etc/ssh/raspberry_rsa -N ""
 
 MAC="$(cat /sys/class/net/eth0/address)"
 echo "Adresse MAC: $MAC"
 
-ssh-keygen -t rsa -b 4096 -f raspberry_rsa -N ""
+rc-service sshd start
 
-RSA="$(cat ./raspberry_rsa.pub)"
+ls /etc/ssh
+RSA="$(cat /etc/ssh/raspberry_rsa.pub)"
 echo "Clé publique: $RSA"
 
 
 
 
 
-curl -X POST -H "Content-Type: application/json" -d "{\"Adresse_MAC\":\"$MAC\", \"Pub_Key\": \"$RSA\"}" http://212.83.130.156:8000/raspberry
+# curl -X POST -H "Content-Type: application/json" -d "{\"Adresse_MAC\":\"$MAC\", \"Pub_Key\": \"$RSA\"}" http://212.83.130.156:8000/raspberry
+curl -X POST -H "Content-Type: application/json" -d "{\"Adresse_MAC\":\"$MAC\", \"Pub_Key\": \"$RSA\"}" http://airnet-api:8000/raspberry
 
-echo "Raspberry-pi enregistré"
+# curl -X POST -H "Content-Type: application/json" -d "{\"Adresse_MAC\":\"$MAC\", \"Pub_Key\": \"$RSA\"}" http://212.83.130.156:8000/key
+curl -X POST -H "Content-Type: application/json" -d "{\"Adresse_MAC\":\"$MAC\", \"Pub_Key\": \"$RSA\"}" http://airnet-api:8000/key
 
 
-PORT="$(curl -X GET http://212.83.130.156:8000/raspberry/$MAC/port | jq -r '.port')"
+
+
+# PORT="$(curl -X GET http://212.83.130.156:8000/raspberry/$MAC/port | jq -r '.port')"
+PORT="$(curl -X GET http://airnet-api:8000/raspberry/$MAC/port | jq -r '.port')"
 echo "Port: $PORT"
 
-ssh -Nf -R "$PORT:localhost:22" root@212.83.130.156
+# SRV_RSA="$(curl -X GET http://212.83.130.156:8000/key)"
+SRV_RSA="$(curl -X GET http://airnet-api:8000/key)"
+echo "Clé publique serveur: $SRV_RSA"
+
+echo "$SRV_RSA" > /etc/ssh/known_hosts
+ssh -Nf -R "$PORT:localhost:22" linuxserver.io@openssh-server -i /etc/ssh/raspberry_rsa -o StrictHostKeyChecking=no -o UserKnownHostsFile=/etc/ssh/known_hosts -o Port=2222
