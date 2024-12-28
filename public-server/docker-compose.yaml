@@ -81,7 +81,7 @@ services:
       - ./airnet-private-server/:/app
       #- ./.ssh/:/config/.ssh # le fichier authorized_keys utilisé par le serveur ssh
       - type: bind
-        source: /g3/.ssh/
+        source: /home/g3/.ssh/
         target: /config/.ssh
         bind:
           create_host_path: true
