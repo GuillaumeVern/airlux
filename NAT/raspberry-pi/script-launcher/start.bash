@@ -33,8 +33,6 @@ PORT="$(curl -X GET http://212.83.130.156:8000/raspberry/$MAC/port | jq -r '.por
 # PORT="$(curl -X GET http://airnet-api:8000/raspberry/$MAC/port | jq -r '.port')"
 echo "Port: $PORT"
 
-SRV_RSA="$(curl -X GET http://212.83.130.156:8000/key)"
-# SRV_RSA="$(curl -X GET http://airnet-api:8000/key)"
 echo "Clé publique serveur: $SRV_RSA"
 # echo "$SRV_RSA" > /etc/ssh/known_hosts
 
