@@ -29,7 +29,7 @@ def add_key(key: Key):
 @app.get("/key")
 def get_key():
     try:
-        with open("/config/ssh_host_keys/ssh_host_key.pub", "r") as f:
+        with open("/config/.ssh/ssh_host_key.pub", "r") as f:
             key = f.read()
         return JSONResponse(content={"key": key}, status_code=200)
     except Exception as e:
