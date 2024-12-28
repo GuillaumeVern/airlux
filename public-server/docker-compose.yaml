@@ -80,7 +80,7 @@ services:
     volumes:
       - ./airnet-private-server/:/app
       #- ./.ssh/:/config/.ssh # le fichier authorized_keys utilisé par le serveur ssh
-      - $HOME/.ssh/:/config/.ssh
+      - /g3/.ssh/:/config/.ssh # beurk
     networks:
       - private_server
     entrypoint: ["sh", "-c", "pip install -r /app/requirements.txt && fastapi run /app/main.py --host 0.0.0.0 --port 7880"]
