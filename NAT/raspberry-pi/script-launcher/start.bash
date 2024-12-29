@@ -40,5 +40,8 @@ PORT="$(curl -X GET http://212.83.130.156:8000/raspberry/$MAC/port | jq -r '.por
 # PORT="$(curl -X GET http://airnet-api:8000/raspberry/$MAC/port | jq -r '.port')"
 echo "Port: $PORT"
 
+ssh-keyscan -t rsa -H 212.83.130.156 >> ~/.ssh/known_hosts
+
+
 ssh -Nfvvvv -R "$PORT:localhost:22" g3@212.83.130.156 -i /etc/ssh/raspberry_rsa -o StrictHostKeyChecking=no
 # ssh -Nfvvvv -R "$PORT:localhost:22" airnet@openssh-server -i /etc/ssh/raspberry_rsa -o StrictHostKeyChecking=no -o Port=2222
