@@ -4,6 +4,8 @@ apk add --no-cache openssh
 apk add --no-cache jq
 apk add --no-cache openrc
 
+apt-get install -y jq
+
 rc-update add sshd
 echo "n" | ssh-keygen -t rsa -b 4096 -f /etc/ssh/raspberry_rsa -N ""
 
@@ -33,11 +35,5 @@ PORT="$(curl -X GET http://212.83.130.156:8000/raspberry/$MAC/port | jq -r '.por
 # PORT="$(curl -X GET http://airnet-api:8000/raspberry/$MAC/port | jq -r '.port')"
 echo "Port: $PORT"
 
-echo "Clé publique serveur: $SRV_RSA"
-# echo "$SRV_RSA" > /etc/ssh/known_hosts
-
-# ssh -Nfvvvv -R "$PORT:localhost:22" airnet@openssh-server -i /etc/ssh/raspberry_rsa -o StrictHostKeyChecking=no -o Port=2222
 ssh -Nfvvvv -R "$PORT:localhost:22" g3@212.83.130.156 -i /etc/ssh/raspberry_rsa -o StrictHostKeyChecking=no
-
-
-sleep 2000
+# ssh -Nfvvvv -R "$PORT:localhost:22" airnet@openssh-server -i /etc/ssh/raspberry_rsa -o StrictHostKeyChecking=no -o Port=2222

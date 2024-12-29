@@ -32,10 +32,7 @@ def get_raspberries():
         return result
     except Exception as e:
         db.reconnect(attempts=1, delay=0)
-        try:
-            return get_raspberries()
-        except Exception as e:
-            return JSONResponse(content={"message": "internal server error"}, status_code=500)
+        return JSONResponse(content={"message": "internal server error"}, status_code=500)
 
 @app.get("/raspberry/{mac}")
 def get_raspberry(mac: str):
@@ -54,10 +51,7 @@ def get_raspberry(mac: str):
         return result[0]
     except Exception as e:
         db.reconnect(attempts=1, delay=0)
-        try:
-            return get_raspberry(mac)
-        except Exception as e:
-            return JSONResponse(content={"message": "internal server error"}, status_code=500)
+        return JSONResponse(content={"message": "internal server error"}, status_code=500)
 
 # cette route n'est pas utilisée mais elle existe juste pour les tests
 @app.get("/port")
@@ -79,10 +73,7 @@ def get_free_port():
         return JSONResponse(content={"port": port}, status_code=200)
     except Exception as e:
         db.reconnect(attempts=1, delay=0)
-        try:
-            return get_free_port()
-        except Exception as e:
-            return JSONResponse(content={"message": "internal server error"}, status_code=500)
+        return JSONResponse(content={"message": "internal server error"}, status_code=500)
 
 @app.get("/raspberry/{mac}/port")
 def get_port(mac: str):
@@ -95,10 +86,7 @@ def get_port(mac: str):
         return JSONResponse(content={"port": result[2]}, status_code=200)
     except Exception as e:
         db.reconnect(attempts=1, delay=0)
-        try:
-            return get_port(mac)
-        except Exception as e:
-            return JSONResponse(content={"message": "internal server error"}, status_code=500)
+        return JSONResponse(content={"message": "internal server error"}, status_code=500)
 
 @app.post("/raspberry")
 def create_raspberry(raspberry: Raspberry, request: Request):
