@@ -84,6 +84,7 @@ services:
         target: /config/.ssh
         bind:
           create_host_path: true
+      - /etc/ssh/:/config/ssh
     networks:
       - private_server
     entrypoint: ["sh", "-c", "pip install -r /app/requirements.txt && fastapi run /app/main.py --host 0.0.0.0 --port 7880"]
