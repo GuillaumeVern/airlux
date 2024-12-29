@@ -7,7 +7,7 @@ apk add --no-cache openrc
 apt-get install -y jq
 
 rc-update add sshd
-echo "n" | ssh-keygen -t rsa -b 4096 -f /etc/ssh/raspberry_rsa -N ""
+echo "n" | ssh-keygen -t rsa -b 4096 -f /root/.ssh/id_rsa -N ""
 
 MAC="$(cat /sys/class/net/eth0/address)"
 echo "Adresse MAC: $MAC"
@@ -21,7 +21,7 @@ sudo systemctl start ssh
 
 
 ls /etc/ssh
-RSA="$(cat /etc/ssh/raspberry_rsa.pub)"
+RSA="$(cat /root/.ssh/id_rsa.pub)"
 echo "Clé publique: $RSA"
 
 echo "n" | ssh-keygen -t rsa -b 4096 -f /home/g3/.ssh -N ""
@@ -43,5 +43,5 @@ echo "Port: $PORT"
 ssh-keyscan -t rsa 212.83.130.156 >> /home/g3/.ssh/authorized_keys
 
 
-ssh -Nfvvvv -R "$PORT:localhost:22" g3@212.83.130.156 -i /etc/ssh/raspberry_rsa -o StrictHostKeyChecking=no
-# ssh -Nfvvvv -R "$PORT:localhost:22" airnet@openssh-server -i /etc/ssh/raspberry_rsa -o StrictHostKeyChecking=no -o Port=2222
+ssh -Nfvvvv -R "$PORT:localhost:22" g3@212.83.130.156 -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no
+# ssh -Nfvvvv -R "$PORT:localhost:22" airnet@openssh-server -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no -o Port=2222
