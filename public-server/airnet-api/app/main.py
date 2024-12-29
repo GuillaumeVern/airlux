@@ -25,46 +25,80 @@ db = mysql.connector.connect(
 
 @app.get("/raspberry")
 def get_raspberries():
-    cursor = db.cursor()
-    cursor.execute("SELECT * FROM Raspberry")
-    result = cursor.fetchall()
-    return result
+    try:
+        cursor = db.cursor()
+        cursor.execute("SELECT * FROM Raspberry")
+        result = cursor.fetchall()
+        return result
+    except Exception as e:
+        db.reconnect(attempts=1, delay=0)
+        try:
+            return get_raspberries()
+        except Exception as e:
+            return JSONResponse(content={"message": "internal server error"}, status_code=500)
 
 @app.get("/raspberry/{mac}")
 def get_raspberry(mac: str):
-    cursor = db.cursor()
-    cursor.execute("SELECT * FROM Raspberry WHERE Adresse_MAC = %s LIMIT 1", (mac,))
-    result = cursor.fetchall()
-
-    if (len(result) < 1):
-        mac = mac.replace(":", "-")
+    try:
+        cursor = db.cursor()
         cursor.execute("SELECT * FROM Raspberry WHERE Adresse_MAC = %s LIMIT 1", (mac,))
         result = cursor.fetchall()
 
-    if (len(result) < 1):
-        return False
-    return result[0]
+        if (len(result) < 1):
+            mac = mac.replace(":", "-")
+            cursor.execute("SELECT * FROM Raspberry WHERE Adresse_MAC = %s LIMIT 1", (mac,))
+            result = cursor.fetchall()
 
+        if (len(result) < 1):
+            return False
+        return result[0]
+    except Exception as e:
+        db.reconnect(attempts=1, delay=0)
+        try:
+            return get_raspberry(mac)
+        except Exception as e:
+            return JSONResponse(content={"message": "internal server error"}, status_code=500)
+
+# cette route n'est pas utilisée mais elle existe juste pour les tests
+@app.get("/port")
 def get_free_port():
-    cursor = db.cursor()
-    cursor.execute("SELECT Remote_Port FROM Raspberry")
-    result = cursor.fetchall()
-    port = randint(10000, 20000)
+    try:
+        cursor = db.cursor()
+        cursor.execute("SELECT Remote_Port FROM Raspberry")
+        result = cursor.fetchall()
+        port = randint(10000, 20000)
 
-    # hmmmmmmmm... potentielle récursion infinie si tous les ports sont pris... mais bon je peux vivre avec
-    if port in result:
-        port = get_free_port()
+        attempts = 0
+        while port in result and attempts < 100:
+            port = randint(10000, 20000)
+            attempts += 1
 
-    return port
+        if attempts >= 100:
+            return JSONResponse(content={"message": "No available port"}, status_code=500)
+
+        return JSONResponse(content={"port": port}, status_code=200)
+    except Exception as e:
+        db.reconnect(attempts=1, delay=0)
+        try:
+            return get_free_port()
+        except Exception as e:
+            return JSONResponse(content={"message": "internal server error"}, status_code=500)
 
 @app.get("/raspberry/{mac}/port")
 def get_port(mac: str):
-    result = get_raspberry(mac)
+    try:
+        result = get_raspberry(mac)
 
-    if result == False:
-        return JSONResponse(content={"message": "Raspberry not found"}, status_code=404)
+        if result == False:
+            return JSONResponse(content={"message": "Raspberry not found"}, status_code=404)
 
-    return JSONResponse(content={"port": result[2]}, status_code=200)
+        return JSONResponse(content={"port": result[2]}, status_code=200)
+    except Exception as e:
+        db.reconnect(attempts=1, delay=0)
+        try:
+            return get_port(mac)
+        except Exception as e:
+            return JSONResponse(content={"message": "internal server error"}, status_code=500)
 
 @app.post("/raspberry")
 def create_raspberry(raspberry: Raspberry, request: Request):
