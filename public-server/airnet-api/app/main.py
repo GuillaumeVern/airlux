@@ -102,6 +102,7 @@ def create_raspberry(raspberry: Raspberry, request: Request):
 
         return JSONResponse(content={"message": "Raspberry created successfully"}, status_code=201)
     except Exception as e:
+        print(e)
         return JSONResponse(content={"message": "internal server error"}, status_code=500)
 
 
@@ -117,7 +118,7 @@ def post_rsa(raspberry: Raspberry, request: Request):
     return JSONResponse(content={"message": "Key added successfully"}, status_code=201)
 
 def format_mac(mac: str):
-    mac = mac.upper()
+    mac = mac.lower()
     mac = mac.replace("-", ":")
     mac = mac.replace("%3A", ":")
     return mac
