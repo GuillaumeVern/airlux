@@ -37,14 +37,13 @@ def get_raspberries():
 @app.get("/raspberry/{mac}")
 def get_raspberry(mac: str):
     try:
+        mac = mac.upper()
+        mac = mac.replace("-", ":")
+        mac = mac.replace("%3A", ":")
+
         cursor = db.cursor()
         cursor.execute("SELECT * FROM Raspberry WHERE Adresse_MAC = %s LIMIT 1", (mac,))
         result = cursor.fetchall()
-
-        if (len(result) < 1):
-            mac = mac.replace(":", "-")
-            cursor.execute("SELECT * FROM Raspberry WHERE Adresse_MAC = %s LIMIT 1", (mac,))
-            result = cursor.fetchall()
 
         if (len(result) < 1):
             return False
