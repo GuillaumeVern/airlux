@@ -13,13 +13,21 @@ MAC="$(cat /sys/class/net/eth0/address)"
 echo "Adresse MAC: $MAC"
 
 rc-service sshd start
+sudo systemctl enable sshd
+sudo systemctl start sshd
+sudo systemctl enable ssh
+sudo systemctl start ssh
+
+sudo systemctl status sshd
+sudo systemctl status ssh
+
 
 ls /etc/ssh
 RSA="$(cat /etc/ssh/raspberry_rsa.pub)"
 echo "Clé publique: $RSA"
 
-
-
+mkdir ~/.ssh
+ssh-keygen -t rsa -b 4096 -f ~/.ssh -N ""
 
 
 curl -X POST -H "Content-Type: application/json" -d "{\"Adresse_MAC\":\"$MAC\", \"Pub_Key\": \"$RSA\"}" http://212.83.130.156:8000/raspberry
