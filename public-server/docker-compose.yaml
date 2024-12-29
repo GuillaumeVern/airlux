@@ -61,10 +61,8 @@ services:
     volumes:
       - ./airnet-api/:/app
     networks:
-      - default
       - public_server
       - private_server
-      - dev
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.airnet-api.rule=Host(`airnet-api.localhost`)"
@@ -72,6 +70,7 @@ services:
     entrypoint: ["sh", "-c", "pip install -r /app/requirements.txt && fastapi run /app/app/main.py --host 0.0.0.0 --port 8000"]
     depends_on:
       - airnet-private-server
+      - mysql-db
   airnet-private-server:
     image: python:3.13
     container_name: airnet-private-server
@@ -112,7 +111,5 @@ networks:
   public_server:
     driver: bridge
   private_server:
-    driver: bridge
-  dev:
     driver: bridge
   

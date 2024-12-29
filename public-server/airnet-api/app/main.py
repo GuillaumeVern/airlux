@@ -32,14 +32,14 @@ def get_raspberries():
         return result
     except Exception as e:
         db.reconnect(attempts=1, delay=0)
-        return JSONResponse(content={"message": "internal server error"}, status_code=500)
+        return JSONResponse(content={"message": e}, status_code=500)
 
 @app.get("/raspberry/{mac}")
 def get_raspberry(mac: str):
     try:
         mac = format_mac(mac)
 
-        cursor = db.cursor()
+        cursor = db.cursor(prepared=True)
         cursor.execute("SELECT * FROM Raspberry WHERE Adresse_MAC = %s LIMIT 1", (mac,))
         result = cursor.fetchall()
 
@@ -48,7 +48,7 @@ def get_raspberry(mac: str):
         return result[0]
     except Exception as e:
         db.reconnect(attempts=1, delay=0)
-        return JSONResponse(content={"message": "internal server error"}, status_code=500)
+        return JSONResponse(content={"message": e}, status_code=500)
 
 # cette route n'est pas utilisée mais elle existe juste pour les tests
 @app.get("/port")
@@ -65,12 +65,12 @@ def get_free_port():
             attempts += 1
 
         if attempts >= 100:
-            return JSONResponse(content={"message": "No available port"}, status_code=500)
+            return False
 
-        return JSONResponse(content={"port": port}, status_code=200)
+        return port
     except Exception as e:
         db.reconnect(attempts=1, delay=0)
-        return JSONResponse(content={"message": "internal server error"}, status_code=500)
+        return JSONResponse(content={"message": e}, status_code=500)
 
 @app.get("/raspberry/{mac}/port")
 def get_port(mac: str):
@@ -83,7 +83,7 @@ def get_port(mac: str):
         return JSONResponse(content={"port": result[2]}, status_code=200)
     except Exception as e:
         db.reconnect(attempts=1, delay=0)
-        return JSONResponse(content={"message": "internal server error"}, status_code=500)
+        return JSONResponse(content={"message": e}, status_code=500)
 
 @app.post("/raspberry")
 def create_raspberry(raspberry: Raspberry, request: Request):
@@ -92,7 +92,7 @@ def create_raspberry(raspberry: Raspberry, request: Request):
     if isPresent != False:
         return JSONResponse(content={"message": "Raspberry already exists"}, status_code=409)
     try:
-        cursor = db.cursor()
+        cursor = db.cursor(prepared=True)
         port = get_free_port()
         cursor.execute("INSERT INTO Raspberry (Adresse_MAC, Adresse_ip, Remote_Port) VALUES (%s, %s, %s)", (raspberry.Adresse_MAC, request.client.host, port))
         db.commit()
@@ -102,8 +102,7 @@ def create_raspberry(raspberry: Raspberry, request: Request):
 
         return JSONResponse(content={"message": "Raspberry created successfully"}, status_code=201)
     except Exception as e:
-        print(e)
-        return JSONResponse(content={"message": "internal server error"}, status_code=500)
+        return JSONResponse(content={"message": e}, status_code=500)
 
 
 @app.get("/key")
