@@ -18,8 +18,6 @@ sudo systemctl start sshd
 sudo systemctl enable ssh
 sudo systemctl start ssh
 
-sudo systemctl status sshd
-sudo systemctl status ssh
 
 
 ls /etc/ssh
