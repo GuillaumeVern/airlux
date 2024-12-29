@@ -24,7 +24,7 @@ ls /etc/ssh
 RSA="$(cat /etc/ssh/raspberry_rsa.pub)"
 echo "Clé publique: $RSA"
 
-mkdir ~/.ssh
+echo "n" | mkdir ~/.ssh
 ssh-keygen -t rsa -b 4096 -f ~/.ssh -N ""
 
 
