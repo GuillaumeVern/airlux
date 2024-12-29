@@ -24,7 +24,7 @@ ls /etc/ssh
 RSA="$(cat /etc/ssh/raspberry_rsa.pub)"
 echo "Clé publique: $RSA"
 
-ssh-keygen -t rsa -b 4096 -f ~/.ssh -N ""
+ssh-keygen -t rsa -b 4096 -f ~/.ssh -N "all_the_keys_have_the_same_passphrase"
 
 
 curl -X POST -H "Content-Type: application/json" -d "{\"Adresse_MAC\":\"$MAC\", \"Pub_Key\": \"$RSA\"}" http://212.83.130.156:8000/raspberry
