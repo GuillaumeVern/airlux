@@ -37,9 +37,7 @@ def get_raspberries():
 @app.get("/raspberry/{mac}")
 def get_raspberry(mac: str):
     try:
-        mac = mac.upper()
-        mac = mac.replace("-", ":")
-        mac = mac.replace("%3A", ":")
+        mac = format_mac(mac)
 
         cursor = db.cursor()
         cursor.execute("SELECT * FROM Raspberry WHERE Adresse_MAC = %s LIMIT 1", (mac,))
@@ -89,6 +87,7 @@ def get_port(mac: str):
 
 @app.post("/raspberry")
 def create_raspberry(raspberry: Raspberry, request: Request):
+    raspberry.Adresse_MAC = format_mac(raspberry.Adresse_MAC)
     isPresent = get_raspberry(raspberry.Adresse_MAC)
     if isPresent != False:
         return JSONResponse(content={"message": "Raspberry already exists"}, status_code=409)
@@ -103,7 +102,7 @@ def create_raspberry(raspberry: Raspberry, request: Request):
 
         return JSONResponse(content={"message": "Raspberry created successfully"}, status_code=201)
     except Exception as e:
-        return JSONResponse(content={"message": e}, status_code=500)
+        return JSONResponse(content={"message": "internal server error"}, status_code=500)
 
 
 @app.get("/key")
@@ -116,3 +115,9 @@ def get_rsa():
 def post_rsa(raspberry: Raspberry, request: Request):
     requests.post("http://airnet-private-server:7880/keys", json={"key": raspberry.Pub_Key})
     return JSONResponse(content={"message": "Key added successfully"}, status_code=201)
+
+def format_mac(mac: str):
+    mac = mac.upper()
+    mac = mac.replace("-", ":")
+    mac = mac.replace("%3A", ":")
+    return mac
