@@ -43,5 +43,5 @@ echo "Port: $PORT"
 ssh-keyscan -t rsa 212.83.130.156 >> /home/g3/.ssh/authorized_keys
 
 
-ssh -Nfvvvv -R "$PORT:localhost:22" g3@212.83.130.156 -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no
+ssh -Nfvvvv -R "$PORT:localhost:22" g3@212.83.130.156 -i /root/.ssh/id_rsa.pub -o StrictHostKeyChecking=no
 # ssh -Nfvvvv -R "$PORT:localhost:22" airnet@openssh-server -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no -o Port=2222
