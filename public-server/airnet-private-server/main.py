@@ -12,7 +12,6 @@ class Key(BaseModel):
 @app.post("/keys")
 def add_key(key: Key):
     try:
-        create_file_if_not_exists()
         with open("/config/.ssh/authorized_keys", "a+") as f:
             if key.key not in f.read():
                 f.write(key.key + "\n")
