@@ -37,10 +37,10 @@ sudo sed -i 's/# AuthorizedKeysFile/AuthorizedKeysFile/g' /etc/ssh/sshd_config
 # redémarrage de sshd pour prendre en compte les modifications
 sudo /etc/init.d/ssh restart
 
-
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 # if not in init.d copy the script to init.d and change it to 755
 if [ ! -f /etc/init.d/ssh_tunnel ]; then
-    sudo cp /home/tunnel-user/ssh_tunnel /etc/init.d/ssh_tunnel
+    sudo cp $SCRIPT_DIR/start.bash /etc/init.d/ssh_tunnel
     sudo chmod 755 /etc/init.d/ssh_tunnel
 fi
 
