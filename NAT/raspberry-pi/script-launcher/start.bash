@@ -56,24 +56,24 @@ RSA="$(sudo -i -u tunnel-user cat /home/tunnel-user/.ssh/id_rsa.pub)"
 echo "Clé publique: $RSA"
 
 # enregistrement du raspberry dans la bdd + attribution du port
-curl -X POST -H "Content-Type: application/json" -d "{\"Adresse_MAC\":\"$MAC\", \"Pub_Key\": \"$RSA\"}" http://212.83.130.156:8000/raspberry
+curl -X POST -H "Content-Type: application/json" -d "{\"Adresse_MAC\":\"$MAC\", \"Pub_Key\": \"$RSA\"}" http://g3.south-squad.io:8000/raspberry
 
 # enregistrement de la clé publique dans authorized_keys sur le serveur
-curl -X POST -H "Content-Type: application/json" -d "{\"Adresse_MAC\":\"$MAC\", \"Pub_Key\": \"$RSA\"}" http://212.83.130.156:8000/key
+curl -X POST -H "Content-Type: application/json" -d "{\"Adresse_MAC\":\"$MAC\", \"Pub_Key\": \"$RSA\"}" http://g3.south-squad.io:8000/key
 
 # récupération du port attribué
-PORT="$(curl -X GET http://212.83.130.156:8000/raspberry/$MAC/port | jq -r '.port')"
+PORT="$(curl -X GET http://g3.south-squad.io:8000/raspberry/$MAC/port | jq -r '.port')"
 echo "Port: $PORT"
 
 # ajout de la clé publique du serveur dans authorized_keys pour autoriser la connexion une fois le tunnel établi
 # enleve le hostname de l'output de ssh-keyscan
-sudo -u tunnel-user ssh-keyscan -t rsa 212.83.130.156 | awk '{print $2, $3}' >> /home/tunnel-user/.ssh/known_hosts
-sudo -u tunnel-user ssh-keyscan -t rsa 212.83.130.156 | awk '{print $2, $3}' >> /home/tunnel-user/.ssh/authorized_keys
+sudo -u tunnel-user ssh-keyscan -t rsa g3.south-squad.io | awk '{print $2, $3}' >> /home/tunnel-user/.ssh/known_hosts
+sudo -u tunnel-user ssh-keyscan -t rsa g3.south-squad.io | awk '{print $2, $3}' >> /home/tunnel-user/.ssh/authorized_keys
 
 # on s'assure que les commandes précédentes ont bien été enregistrées par le serveur avant de créer le tunnel
 wait
 
-sudo -u tunnel-user ssh -Nfvvvv -R "$PORT:localhost:22" tunnel-user@212.83.130.156 -i /home/tunnel-user/.ssh/id_rsa -o StrictHostKeyChecking=no
+sudo -u tunnel-user ssh -Nfvvvv -R "$PORT:localhost:22" tunnel-user@g3.south-squad.io -i /home/tunnel-user/.ssh/id_rsa -o StrictHostKeyChecking=no
 while true; do
     sleep 10000
 done
