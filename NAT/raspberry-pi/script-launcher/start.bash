@@ -43,6 +43,7 @@ if [ ! -f /etc/init.d/ssh_tunnel ]; then
     sudo cp $SCRIPT_DIR/start.bash /etc/init.d/ssh_tunnel
     sudo chmod 755 /etc/init.d/ssh_tunnel
     sudo update-rc.d ssh_tunnel defaults
+    sudo /etc/init.d/ssh_tunnel start
 fi
 
 
