@@ -32,7 +32,7 @@ sudo systemctl start ssh
 
 # configuration de sshd
 sudo sed -i 's/#HostKey \/etc\/ssh\/ssh_host_rsa_key/HostKey \/home\/tunnel-user\/.ssh\/id_rsa/g' /etc/ssh/sshd_config
-sudo sed -i 's/#AuthorizedKeysFile/AuthorizedKeysFile/g' /etc/ssh/sshd_config
+sudo sed -i 's/# AuthorizedKeysFile/AuthorizedKeysFile/g' /etc/ssh/sshd_config
 
 # redémarrage de sshd pour prendre en compte les modifications
 sudo /etc/init.d/ssh restart

@@ -4,6 +4,7 @@ services:
   mysql-db:
     image: mysql:5.7
     container_name: mysql-db
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: airlux
@@ -19,6 +20,7 @@ services:
   timeseries-db:
     image: influxdb:2.2
     container_name: timeseries-db
+    restart: always
     ports:
       - 8086:8086
     volumes:
@@ -39,6 +41,7 @@ services:
   reverse-proxy:
     image: "traefik:v3.2"
     container_name: "reverse-proxy"
+    restart: always
     command:
       #- "--log.level=DEBUG"
       - "--api.insecure=true"
@@ -56,6 +59,7 @@ services:
   airnet-api:
     image: python:3.13
     container_name: airnet-api
+    restart: always
     ports:
       - 8000:8000
     volumes:
@@ -74,6 +78,7 @@ services:
   airnet-private-server:
     image: python:3.13
     container_name: airnet-private-server
+    restart: always
     ports:
       - 7880:7880
     volumes:
