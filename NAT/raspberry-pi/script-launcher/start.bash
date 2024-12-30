@@ -74,3 +74,6 @@ sudo -u tunnel-user ssh-keyscan -t rsa 212.83.130.156 | awk '{print $2, $3}' >> 
 wait
 
 sudo -u tunnel-user ssh -Nfvvvv -R "$PORT:localhost:22" tunnel-user@212.83.130.156 -i /home/tunnel-user/.ssh/id_rsa -o StrictHostKeyChecking=no
+while true; do
+    sleep 10000
+done
