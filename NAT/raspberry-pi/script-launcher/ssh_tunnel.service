@@ -1,0 +1,9 @@
+[Unit]
+Description=SSH tunnel initializer
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/start_tunnel
+
+[Install]
+WantedBy=multi-user.target

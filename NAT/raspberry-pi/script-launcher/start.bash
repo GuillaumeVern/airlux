@@ -38,14 +38,16 @@ sudo sed -i 's/# AuthorizedKeysFile/AuthorizedKeysFile/g' /etc/ssh/sshd_config
 sudo /etc/init.d/ssh restart
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-# if not in init.d copy the script to init.d and change it to 755
-if [ ! -f /etc/init.d/ssh_tunnel ]; then
-    sudo cp $SCRIPT_DIR/start.bash /etc/init.d/ssh_tunnel
-    sudo chmod 755 /etc/init.d/ssh_tunnel
-    sudo update-rc.d ssh_tunnel defaults
-    sudo /etc/init.d/ssh_tunnel start
-fi
+# if the systemd service does not exist, copy the script to the correct folder and create a systemd service for it
 
+if [ ! -f /etc/systemd/system/ssh_tunnel.service ]; then
+    sudo cp $SCRIPT_DIR/ssh_tunnel.service /etc/systemd/system/ssh_tunnel.service
+    sudo cp $SCRIPT_DIR/start.bash /usr/bin/start_tunnel
+    sudo systemctl daemon-reload
+    sudo systemctl enable ssh_tunnel
+    sudo systemctl start ssh_tunnel
+else
+    sudo systemctl restart ssh_tunnel
 
 
 # récupération de la clé publique pour l'envoyer au serveur
