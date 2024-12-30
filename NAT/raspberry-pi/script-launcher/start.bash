@@ -19,10 +19,10 @@ sudo systemctl start ssh
 
 
 
-echo "n" | ssh-keygen -t rsa -b 4096 -f /etc/ssh/id_rsa -N ""
+echo "n" | sudo -u user ssh-keygen -t rsa -b 4096 -f /etc/ssh/id_rsa -N ""
 
 ls /etc/ssh
-RSA="$(ssh-keyscan -t rsa localhost)"
+RSA="$(ssh-keyscan -t rsa localhost | cut -d " " -f 2)"
 echo "Clé publique: $RSA"
 
 
