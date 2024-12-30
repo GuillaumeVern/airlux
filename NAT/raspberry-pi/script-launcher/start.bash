@@ -19,10 +19,10 @@ sudo systemctl start ssh
 
 
 
-echo "n" | sudo -u user ssh-keygen -t rsa -b 4096 -f /etc/ssh/id_rsa -N ""
+echo "n" | sudo -i -u tunnel-user ssh-keygen -t rsa -b 4096 -f /home/tunnel-user/.ssh/id_rsa -N ""
 
-ls /etc/ssh
-RSA="$(ssh-keyscan -t rsa localhost)"
+sudo -i -u tunnel-user ls -la /home/tunnel-user/.ssh
+RSA="$(sudo -i -u tunnel-user cat /home/tunnel-user/.ssh/id_rsa.pub)"
 echo "Clé publique: $RSA"
 
 
@@ -40,8 +40,9 @@ PORT="$(curl -X GET http://212.83.130.156:8000/raspberry/$MAC/port | jq -r '.por
 # PORT="$(curl -X GET http://airnet-api:8000/raspberry/$MAC/port | jq -r '.port')"
 echo "Port: $PORT"
 
-ssh-keyscan -t rsa 212.83.130.156 >> /home/user/.ssh/authorized_keys
+sudo -i -u tunnel-user ssh-keyscan -t rsa 212.83.130.156 >> /home/tunnel-user/.ssh/authorized_keys
 
+sleep 5
 
-sudo -u user ssh -Nfvvvv -R "$PORT:localhost:22" g3@212.83.130.156 -i /etc/ssh/id_rsa -o StrictHostKeyChecking=no
-# ssh -Nfvvvv -R "$PORT:localhost:22" airnet@openssh-server -i /etc/ssh/id_rsa -o StrictHostKeyChecking=no -o Port=2222
+sudo -u tunnel-user ssh -Nfvvvv -R "$PORT:localhost:22" tunnel-user@212.83.130.156 -i /home/tunnel-user/.ssh/id_rsa -o StrictHostKeyChecking=no
+# ssh -Nfvvvv -R "$PORT:localhost:22" airnet@openssh-server -i /home/tunnel-user/.ssh/id_rsa -o StrictHostKeyChecking=no -o Port=2222
