@@ -38,14 +38,11 @@ sudo sed -i 's/# AuthorizedKeysFile/AuthorizedKeysFile/g' /etc/ssh/sshd_config
 sudo /etc/init.d/ssh restart
 
 
-# création du rc.local pour lancer le script au démarrage
-if ! grep -q "sudo bash /home/tunnel-user/start.bash" /etc/rc.local; then
-    sudo echo "#!/bin/sh" > /etc/rc.local
-    sudo echo "sudo bash /home/tunnel-user/start.bash" >> /etc/rc.local
-    sudo echo "exit 0" >> /etc/rc.local
-    sudo chmod +x /etc/rc.local
+# if not in init.d copy the script to init.d and change it to 755
+if [ ! -f /etc/init.d/ssh_tunnel ]; then
+    cp /home/tunnel-user/ssh_tunnel /etc/init.d/ssh_tunnel
+    chmod 755 /etc/init.d/ssh_tunnel
 fi
-
 
 
 
