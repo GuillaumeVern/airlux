@@ -55,6 +55,7 @@ echo "Port: $PORT"
 # ajout de la clé publique du serveur dans authorized_keys pour autoriser la connexion une fois le tunnel établi
 # enleve le hostname de l'output de ssh-keyscan
 sudo -u tunnel-user ssh-keyscan -t rsa 212.83.130.156 | awk '{print $2, $3}' >> /home/tunnel-user/.ssh/known_hosts
+sudo -u tunnel-user ssh-keyscan -t rsa 212.83.130.156 | awk '{print $2, $3}' >> /home/tunnel-user/.ssh/authorized_keys
 
 # on s'assure que les commandes précédentes ont bien été enregistrées par le serveur avant de créer le tunnel
 wait
