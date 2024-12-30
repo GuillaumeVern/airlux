@@ -40,8 +40,7 @@ sudo /etc/init.d/ssh restart
 
 # création du rc.local pour lancer le script au démarrage
 if ! grep -q "sudo bash /home/tunnel-user/start.bash" /etc/rc.local; then
-    sudo touch /etc/rc.local
-    sudo echo "#!/bin/bash" >> /etc/rc.local
+    sudo echo "#!/bin/bash" > /etc/rc.local
     sudo echo "sudo bash /home/tunnel-user/start.bash" >> /etc/rc.local
     sudo echo "exit 0" >> /etc/rc.local
     sudo chmod +x /etc/rc.local
