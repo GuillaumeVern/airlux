@@ -48,6 +48,7 @@ if [ ! -f /etc/systemd/system/ssh_tunnel.service ]; then
     sudo systemctl start ssh_tunnel
 else
     sudo systemctl restart ssh_tunnel
+fi
 
 
 # récupération de la clé publique pour l'envoyer au serveur
