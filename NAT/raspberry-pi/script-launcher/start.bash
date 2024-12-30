@@ -22,7 +22,7 @@ sudo systemctl start ssh
 echo "n" | sudo -u user ssh-keygen -t rsa -b 4096 -f /etc/ssh/id_rsa -N ""
 
 ls /etc/ssh
-RSA="$(ssh-keyscan -t rsa localhost | cut -d " " -f 2)"
+RSA="$(ssh-keyscan -t rsa localhost | cut -d " " -f 1)"
 echo "Clé publique: $RSA"
 
 
