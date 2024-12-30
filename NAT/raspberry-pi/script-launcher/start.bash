@@ -43,6 +43,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 if [ ! -f /etc/systemd/system/ssh_tunnel.service ]; then
     sudo cp $SCRIPT_DIR/ssh_tunnel.service /etc/systemd/system/ssh_tunnel.service
     sudo cp $SCRIPT_DIR/start.bash /usr/bin/start_tunnel
+    sudo chmod +x /usr/bin/start_tunnel
     sudo systemctl daemon-reload
     sudo systemctl enable ssh_tunnel
     sudo systemctl start ssh_tunnel
