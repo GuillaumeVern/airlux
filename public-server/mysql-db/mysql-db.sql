@@ -6,7 +6,6 @@ CREATE TABLE Raspberry(
    Adresse_ip VARCHAR(16)  NOT NULL,
    Remote_Port INT,
    PRIMARY KEY(Adresse_MAC),
-   UNIQUE(Adresse_ip),
    UNIQUE(Remote_Port)
 );
 
