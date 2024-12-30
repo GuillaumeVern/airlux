@@ -37,6 +37,17 @@ sudo sed -i 's/# AuthorizedKeysFile/AuthorizedKeysFile/g' /etc/ssh/sshd_config
 # redémarrage de sshd pour prendre en compte les modifications
 sudo /etc/init.d/ssh restart
 
+
+# création du rc.local pour lancer le script au démarrage
+sudo echo "#!/bin/bash" > /etc/rc.local
+sudo echo "sudo bash /home/tunnel-user/start.bash" >> /etc/rc.local
+sudo echo "exit 0" >> /etc/rc.local
+sudo chmod +x /etc/rc.local
+
+
+
+
+
 # récupération de la clé publique pour l'envoyer au serveur
 sudo -u tunnel-user ls -la /home/tunnel-user/.ssh
 RSA="$(sudo -i -u tunnel-user cat /home/tunnel-user/.ssh/id_rsa.pub)"
