@@ -42,6 +42,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 if [ ! -f /etc/init.d/ssh_tunnel ]; then
     sudo cp $SCRIPT_DIR/start.bash /etc/init.d/ssh_tunnel
     sudo chmod 755 /etc/init.d/ssh_tunnel
+    sudo update-rc.d ssh_tunnel defaults
 fi
 
 
