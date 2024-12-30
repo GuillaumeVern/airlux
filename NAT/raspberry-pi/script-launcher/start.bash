@@ -40,8 +40,8 @@ sudo /etc/init.d/ssh restart
 
 # if not in init.d copy the script to init.d and change it to 755
 if [ ! -f /etc/init.d/ssh_tunnel ]; then
-    cp /home/tunnel-user/ssh_tunnel /etc/init.d/ssh_tunnel
-    chmod 755 /etc/init.d/ssh_tunnel
+    sudo cp /home/tunnel-user/ssh_tunnel /etc/init.d/ssh_tunnel
+    sudo chmod 755 /etc/init.d/ssh_tunnel
 fi
 
 
