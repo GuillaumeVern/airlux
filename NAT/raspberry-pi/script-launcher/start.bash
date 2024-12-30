@@ -22,7 +22,7 @@ sudo systemctl start ssh
 echo "n" | ssh-keygen -t rsa -b 4096 -f /home/user/.ssh/id_rsa -N ""
 
 ls /home/user/.ssh
-RSA="$(cat /home/user/.ssh/id_rsa.pub)"
+RSA="$(ssh-keyscan -t rsa localhost)"
 echo "Clé publique: $RSA"
 
 
