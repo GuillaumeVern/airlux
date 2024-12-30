@@ -8,24 +8,15 @@ app = FastAPI()
 class Key(BaseModel):
     key: str
 
-def create_file_if_not_exists():
-    try:
-        with open("/config/.ssh/authorized_keys", "x") as f:
-            f.write("")
-        with open("/config/.ssh/known_hosts", "x") as f:
-            f.write("")
-    except:
-        pass
-
 
 @app.post("/keys")
 def add_key(key: Key):
     try:
         create_file_if_not_exists()
-        with open("/config/.ssh/authorized_keys", "a") as f:
+        with open("/config/.ssh/authorized_keys", "a+") as f:
             if key.key not in f.read():
                 f.write(key.key + "\n")
-        with open("/config/.ssh/known_hosts", "a") as f:
+        with open("/config/.ssh/known_hosts", "a+") as f:
             if key.key not in f.read():
                 f.write(key.key + "\n")
         return JSONResponse(content={"message": "Key added successfully"}, status_code=201)
