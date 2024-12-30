@@ -47,8 +47,6 @@ if [ ! -f /etc/systemd/system/ssh_tunnel.service ]; then
     sudo systemctl daemon-reload
     sudo systemctl enable ssh_tunnel
     sudo systemctl start ssh_tunnel
-else
-    sudo systemctl restart ssh_tunnel
 fi
 
 
