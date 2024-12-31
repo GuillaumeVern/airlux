@@ -90,6 +90,7 @@ wait
 
 # on installe docker si ce n'est pas déjà fait
 if ! [ -x "$(command -v docker)" ]; then
+    sudo killall apt apt-get
     sudo curl -fsSL https://get.docker.com -o ~/get-docker.sh
     sudo sh ~/get-docker.sh
 fi
