@@ -1,6 +1,8 @@
 #!/bin/bash
 apt-get update
 apt-get install -y jq
+apt-get install -y curl
+apt-get install -y openssh-server
 
 # on crée l'utilisateur tunnel-user s'il n'existe pas
 # -m pour s'assurer que le répertoire home est créé
