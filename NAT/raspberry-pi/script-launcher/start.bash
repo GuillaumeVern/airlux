@@ -61,19 +61,48 @@ curl -X POST -H "Content-Type: application/json" -d "{\"Adresse_MAC\":\"$MAC\", 
 # enregistrement de la clé publique dans authorized_keys sur le serveur
 curl -X POST -H "Content-Type: application/json" -d "{\"Adresse_MAC\":\"$MAC\", \"Pub_Key\": \"$RSA\"}" http://g3.south-squad.io:8000/key
 
-# récupération du port attribué
-PORT="$(curl -X GET http://g3.south-squad.io:8000/raspberry/$MAC/port | jq -r '.port')"
-echo "Port: $PORT"
+# récupération du remote port ssh
+REMOTE_SSH_PORT="$(curl -X GET http://g3.south-squad.io:8000/raspberry/$MAC/ssh/remote-port | jq -r '.port')"
+echo "Port SSH distant: $REMOTE_SSH_PORT"
+
+# port local ssh
+LOCAL_SSH_PORT="$(curl -X GET http://g3.south-squad.io:8000/service/ssh/local-port | jq -r '.port')"
+echo "Port SSH local: $LOCAL_SSH_PORT"
+
+# remote port home assistant
+REMOTE_HA_PORT="$(curl -X GET http://g3.south-squad.io:8000/raspberry/$MAC/home/remote-port | jq -r '.port')"
+echo "Port Home Assistant distant: $REMOTE_HA_PORT"
+
+# port local home assistant
+LOCAL_HA_PORT="$(curl -X GET http://g3.south-squad.io:8000/service/home/local-port | jq -r '.port')"
+echo "Port Home Assistant local: $LOCAL_HA_PORT"
+
 
 # ajout de la clé publique du serveur dans authorized_keys pour autoriser la connexion une fois le tunnel établi
 # enleve le hostname de l'output de ssh-keyscan
 sudo -u tunnel-user ssh-keyscan -t rsa g3.south-squad.io | awk '{print $2, $3}' >> /home/tunnel-user/.ssh/known_hosts
 sudo -u tunnel-user ssh-keyscan -t rsa g3.south-squad.io | awk '{print $2, $3}' >> /home/tunnel-user/.ssh/authorized_keys
 
+# on installe docker si ce n'est pas déjà fait
+if ! [ -x "$(command -v docker)" ]; then
+    sudo curl -fsSL https://get.docker.com -o ~/get-docker.sh
+    sudo sh ~/get-docker.sh
+fi
+
+# on lance les services locaux
+sudo cd $SCRIPT_DIR
+sudo cd ../
+sudo docker-compose up -d --force-recreate
+
 # on s'assure que les commandes précédentes ont bien été enregistrées par le serveur avant de créer le tunnel
 wait
 
-sudo -u tunnel-user ssh -Nfvvvv -R "$PORT:localhost:22" tunnel-user@g3.south-squad.io -i /home/tunnel-user/.ssh/id_rsa -o StrictHostKeyChecking=no
+# tunnel ssh pour service ssh
+sudo -u tunnel-user ssh -Nf -R "$REMOTE_SSH_PORT:localhost:$LOCAL_SSH_PORT" tunnel-user@g3.south-squad.io -i /home/tunnel-user/.ssh/id_rsa -o StrictHostKeyChecking=no
+
+# tunnel ssh pour service home assistant
+sudo -u tunnel-user ssh -Nf -R "$REMOTE_HA_PORT:localhost:$LOCAL_HA_PORT" tunnel-user@g3.south-squad.io -i /home/tunnel-user/.ssh/id_rsa -o StrictHostKeyChecking=no
+
 while true; do
     sleep 10000
 done
