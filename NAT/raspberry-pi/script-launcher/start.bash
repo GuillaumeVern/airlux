@@ -87,8 +87,14 @@ echo "Port Home Assistant local: $LOCAL_HA_PORT"
 
 # ajout de la clé publique du serveur dans authorized_keys pour autoriser la connexion une fois le tunnel établi
 # enleve le hostname de l'output de ssh-keyscan
-sudo -u tunnel-user ssh-keyscan -t rsa g3.south-squad.io | awk '{print $2, $3}' >> /home/tunnel-user/.ssh/known_hosts
-sudo -u tunnel-user ssh-keyscan -t rsa g3.south-squad.io | awk '{print $2, $3}' >> /home/tunnel-user/.ssh/authorized_keys
+# sudo -u tunnel-user ssh-keyscan -t rsa g3.south-squad.io | awk '{print $2, $3}' >> /home/tunnel-user/.ssh/known_hosts
+REMOTE_PUB_KEY="$(sudo -u tunnel-user ssh-keyscan -t rsa g3.south-squad.io)"
+
+if ! grep -q "$REMOTE_PUB_KEY" /home/tunnel-user/.ssh/authorized_keys; then
+    echo "$REMOTE_PUB_KEY" | awk '{print $2, $3}' >> /home/tunnel-user/.ssh/authorized_keys
+fi
+
+ 
 
 # on installe docker si ce n'est pas déjà fait
 if ! [ -x "$(command -v docker)" ]; then
@@ -115,7 +121,3 @@ sudo -u tunnel-user ssh -Nf -R "$REMOTE_HA_PORT:localhost:$LOCAL_HA_PORT" tunnel
 
 sudo -u tunnel-user autossh -M 0 -o "ServerAliveInterval 30" -o "ServerAliveCountMax 3" -f -N -R "$REMOTE_SSH_PORT:localhost:$LOCAL_SSH_PORT" tunnel-user@g3.south-squad.io
 sudo -u tunnel-user autossh -M 0 -o "ServerAliveInterval 30" -o "ServerAliveCountMax 3" -f -N -R "$REMOTE_HA_PORT:localhost:$LOCAL_HA_PORT" tunnel-user@g3.south-squad.io
-
-while true; do
-    sleep 10000
-done
