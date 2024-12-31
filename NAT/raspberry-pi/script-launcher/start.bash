@@ -90,8 +90,8 @@ if ! [ -x "$(command -v docker)" ]; then
 fi
 
 # on lance les services locaux
-sudo cd $SCRIPT_DIR
-sudo cd ../
+cd $SCRIPT_DIR
+cd ../
 sudo docker-compose up -d --force-recreate
 
 # on s'assure que les commandes précédentes ont bien été enregistrées par le serveur avant de créer le tunnel
