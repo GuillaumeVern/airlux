@@ -1,7 +1,6 @@
 #!/bin/bash
 apt-get update
 apt-get install -y jq
-apt-get install -y curl
 
 # on crée l'utilisateur tunnel-user s'il n'existe pas
 # -m pour s'assurer que le répertoire home est créé
@@ -38,7 +37,7 @@ sudo sed -i 's/#HostKey \/etc\/ssh\/ssh_host_rsa_key/HostKey \/home\/tunnel-user
 sudo sed -i 's/# AuthorizedKeysFile/AuthorizedKeysFile/g' /etc/ssh/sshd_config
 
 # redémarrage de sshd pour prendre en compte les modifications
-sudo /etc/init.d/ssh restart
+sudo systemctl restart sshd
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 # if the systemd service does not exist, copy the script to the correct folder and create a systemd service for it
@@ -88,7 +87,7 @@ sudo -u tunnel-user ssh-keyscan -t rsa g3.south-squad.io | awk '{print $2, $3}' 
 
 # on installe docker si ce n'est pas déjà fait
 if ! [ -x "$(command -v docker)" ]; then
-    wait 2750
+    sleep 30
     sudo curl -fsSL https://get.docker.com -o ~/get-docker.sh
     sudo sh ~/get-docker.sh
 fi
