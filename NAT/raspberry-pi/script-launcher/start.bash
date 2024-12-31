@@ -86,6 +86,8 @@ echo "Port Home Assistant local: $LOCAL_HA_PORT"
 sudo -u tunnel-user ssh-keyscan -t rsa g3.south-squad.io | awk '{print $2, $3}' >> /home/tunnel-user/.ssh/known_hosts
 sudo -u tunnel-user ssh-keyscan -t rsa g3.south-squad.io | awk '{print $2, $3}' >> /home/tunnel-user/.ssh/authorized_keys
 
+wait
+
 # on installe docker si ce n'est pas déjà fait
 if ! [ -x "$(command -v docker)" ]; then
     sudo curl -fsSL https://get.docker.com -o ~/get-docker.sh
