@@ -107,14 +107,14 @@ sudo docker compose up -d --force-recreate
 wait
 
 # tunnel ssh pour service ssh
-#sudo -u tunnel-user ssh -Nf -R "$REMOTE_SSH_PORT:localhost:$LOCAL_SSH_PORT" tunnel-user@g3.south-squad.io -i /home/tunnel-user/.ssh/id_rsa -o StrictHostKeyChecking=no
+sudo -u tunnel-user ssh -Nf -R "$REMOTE_SSH_PORT:localhost:$LOCAL_SSH_PORT" tunnel-user@g3.south-squad.io -i /home/tunnel-user/.ssh/id_rsa -o StrictHostKeyChecking=no
 
 # tunnel ssh pour service home assistant
-#sudo -u tunnel-user ssh -Nf -R "$REMOTE_HA_PORT:localhost:$LOCAL_HA_PORT" tunnel-user@g3.south-squad.io -i /home/tunnel-user/.ssh/id_rsa -o StrictHostKeyChecking=no
+sudo -u tunnel-user ssh -Nf -R "$REMOTE_HA_PORT:localhost:$LOCAL_HA_PORT" tunnel-user@g3.south-squad.io -i /home/tunnel-user/.ssh/id_rsa -o StrictHostKeyChecking=no
 
 
-sudo autossh -M 0 -f -N -R "$REMOTE_SSH_PORT:localhost:$LOCAL_SSH_PORT" -i /home/tunnel-user/.ssh/id_rsa -o StrictHostKeyChecking=no
-sudo autossh -M 0 -f -N -R "$REMOTE_HA_PORT:localhost:$LOCAL_HA_PORT" -i /home/tunnel-user/.ssh/id_rsa -o StrictHostKeyChecking=no
+sudo -u tunnel-user autossh -M 0 -o "ServerAliveInterval 30" -o "ServerAliveCountMax 3" -f -N -R "$REMOTE_SSH_PORT:localhost:$LOCAL_SSH_PORT" tunnel-user@g3.south-squad.io
+sudo -u tunnel-user autossh -M 0 -o "ServerAliveInterval 30" -o "ServerAliveCountMax 3" -f -N -R "$REMOTE_HA_PORT:localhost:$LOCAL_HA_PORT" tunnel-user@g3.south-squad.io
 
 while true; do
     sleep 10000
