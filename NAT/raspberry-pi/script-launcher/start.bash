@@ -22,8 +22,10 @@ echo "n" | sudo -u tunnel-user ssh-keygen -t rsa -b 4096 -f /home/tunnel-user/.s
 
 
 # récupération de l'adresse mac pour la stocker dans la base de données
-MAC="$(cat /sys/class/net/eth0/address)"
+# il faut configurer le nom de l'interface en dur, ex: eth0, enp0s3, etc.
+MAC="$(cat /sys/class/net/enp0s3/address)"
 echo "Adresse MAC: $MAC"
+
 
 # démarrage des différents services ssh
 sudo systemctl enable sshd
