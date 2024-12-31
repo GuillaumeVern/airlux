@@ -204,5 +204,5 @@ def post_rsa(raspberry: Raspberry, request: Request):
 def format_mac(mac: str):
     mac = mac.lower()
     mac = mac.replace("-", ":")
-    mac = mac.replace("%3A", ":")
+    mac = mac.replace("%3a", ":")
     return mac
