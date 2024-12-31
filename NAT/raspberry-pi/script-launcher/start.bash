@@ -89,7 +89,7 @@ sudo -u tunnel-user ssh-keyscan -t rsa g3.south-squad.io | awk '{print $2, $3}' 
 
 # on installe docker si ce n'est pas déjà fait
 if ! [ -x "$(command -v docker)" ]; then
-    sleep 30
+    sleep 10
     sudo curl -fsSL https://get.docker.com -o ~/get-docker.sh
     sudo sh ~/get-docker.sh
 fi
@@ -97,6 +97,7 @@ fi
 # on lance les services locaux
 cd $SCRIPT_DIR
 cd ../
+cp -f ../esp32-devices/simulation/.env.example ../esp32-devices/simulation/.env
 sudo docker compose up -d --force-recreate
 
 # on s'assure que les commandes précédentes ont bien été enregistrées par le serveur avant de créer le tunnel
