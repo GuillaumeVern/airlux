@@ -88,7 +88,7 @@ sudo -u tunnel-user ssh-keyscan -t rsa g3.south-squad.io | awk '{print $2, $3}' 
 
 # on installe docker si ce n'est pas déjà fait
 if ! [ -x "$(command -v docker)" ]; then
-    wait apt-get update
+    wait 2750
     sudo curl -fsSL https://get.docker.com -o ~/get-docker.sh
     sudo sh ~/get-docker.sh
 fi
