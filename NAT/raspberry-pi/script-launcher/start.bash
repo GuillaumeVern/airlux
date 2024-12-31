@@ -37,6 +37,8 @@ sudo systemctl start ssh
 # configuration de sshd
 sudo sed -i 's/#HostKey \/etc\/ssh\/ssh_host_rsa_key/HostKey \/home\/tunnel-user\/.ssh\/id_rsa/g' /etc/ssh/sshd_config
 sudo sed -i 's/# AuthorizedKeysFile/AuthorizedKeysFile/g' /etc/ssh/sshd_config
+sudo sed -i 's/#AllowTcpForwarding yes/AllowTcpForwarding yes/g' /etc/ssh/sshd_config
+sudo sed -i 's/#GatewayPorts no/GatewayPorts yes/g' /etc/ssh/sshd_config
 
 # redémarrage de sshd pour prendre en compte les modifications
 sudo systemctl restart sshd
