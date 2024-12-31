@@ -40,9 +40,9 @@ sudo /etc/init.d/ssh restart
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 # if the systemd service does not exist, copy the script to the correct folder and create a systemd service for it
 
+sudo cp $SCRIPT_DIR/start.bash /usr/bin/start_tunnel
 if [ ! -f /etc/systemd/system/ssh_tunnel.service ]; then
-    sudo cp $SCRIPT_DIR/ssh_tunnel.service /etc/systemd/system/ssh_tunnel.service
-    sudo cp $SCRIPT_DIR/start.bash /usr/bin/start_tunnel
+    sudo cp -f $SCRIPT_DIR/ssh_tunnel.service /etc/systemd/system/ssh_tunnel.service
     sudo chmod +x /usr/bin/start_tunnel
     sudo systemctl daemon-reload
     sudo systemctl enable ssh_tunnel
