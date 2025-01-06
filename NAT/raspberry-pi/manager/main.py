@@ -3,13 +3,15 @@ import random
 import time
 import logging
 from influxdb_client import InfluxDBClient
+import influxdb_client
+import json
 BROKER = 'mqtt-broker'
 PORT = 1883
 TOPIC = "raspberry"
 CLIENT_ID = f'python-mqtt-{random.randint(0, 1000)}'
 
-INFLUXDB_URL = 'http://localhost:8086'
-INFLUXDB_TOKEN = 'QWt9zTU7bUO6y1-J07voSe5vrugx7vKgYEXutKlnaa4CmuQHvl6nEFxjZeV32sirnCa5ZjlGYoAy3FwFYfcQ2w=='
+INFLUXDB_URL = 'http://timeseries-db:8086'
+INFLUXDB_TOKEN = 'QphJAbGs76Iv9KMcfb85xx2JWvePZOLxI2DagcRe6t29Q5Q--Aoh0LjqMWL9rU1R9oXllwPZLHYWgf6QxmZ_KQ=='
 # username = 'emqx'
 # password = 'public'
 
@@ -59,11 +61,35 @@ def connect_mqtt():
 
 
 def subscribe_to_all(client: mqtt_client):
+    inf_client = connect_influxdb()
     def on_message(client, userdata, message):
-        print(f"Received `{message.payload.decode()}` from `{message.topic}` topic")
+        decoded_payload = message.payload.decode()
+        decoded_payload = json.loads(decoded_payload)
+        #payload format {"mac": "mac adress", "value": "floating point value", "timestamp": "timestamp"}
+        print(f"Received `{decoded_payload}` from `{message.topic}` topic")
+        print(f"Message received: {message.payload}")
+        data = {
+            "measurement": message.topic,
+            "fields": {
+                "mac": decoded_payload["mac"],
+                "value": float(decoded_payload["value"])
+            },
+            "time": decoded_payload["timestamp"]
+        }
+        write_to_influxdb(inf_client, data)
 
     client.subscribe('#')
     client.on_message = on_message
+
+def connect_influxdb():
+    inf_client = InfluxDBClient(url=INFLUXDB_URL, token=INFLUXDB_TOKEN, org='docs')
+    return inf_client
+
+def write_to_influxdb(inf_client: InfluxDBClient, data):
+    write_api = inf_client.write_api()
+    record = influxdb_client.Point("raspberry").tag("mac", data["fields"]["mac"]).tag("measurement", data["measurement"]).field("value", data["fields"]["value"]).time(data["time"])
+    write_api.write(bucket='raspberry', record=record, org='docs')
+    print(f"Data written to InfluxDB: {record}")
 
 
 
@@ -71,8 +97,6 @@ mqtt_client = connect_mqtt()
 mqtt_client.loop_start()
 subscribe_to_all(mqtt_client)
 
-inf_client = InfluxDBClient()
-print('test', inf_client.health().status)
 
 
 

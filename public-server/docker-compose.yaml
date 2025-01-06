@@ -34,6 +34,7 @@ services:
       DOCKER_INFLUXDB_INIT_PASSWORD: airluxpassword
     networks:
       - public_server
+      - dev
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.timeseries-db.rule=Host(`timeseries-db.localhost`)"
@@ -117,4 +118,6 @@ networks:
     driver: bridge
   private_server:
     driver: bridge
-  
+  dev:
+    external: true
+    name: dev
