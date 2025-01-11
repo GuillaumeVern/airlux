@@ -185,6 +185,9 @@ def create_raspberry(raspberry: Raspberry, request: Request):
                 cursor.execute("INSERT INTO Raspberry_has_Service (Id_Raspberry, Id_Service, Remote_Port) VALUES (%s, %s, %s)", (id_raspberry, service[0], port))
                 db.commit()
 
+        # configuration de traefik
+        
+
         return JSONResponse(content={"message": "Raspberry created successfully"}, status_code=201)
     except Exception as e:
         return JSONResponse(content={"message": e}, status_code=500)
