@@ -24,8 +24,8 @@ echo "n" | sudo -u tunnel-user ssh-keygen -t rsa -b 4096 -f /home/tunnel-user/.s
 
 
 # récupération de l'adresse mac pour la stocker dans la base de données
-# il faut configurer le nom de l'interface en dur, ex: eth0, enp0s3, etc.
-MAC="$(cat /sys/class/net/enp0s3/address)"
+NETINT="$(ip route get 8.8.8.8 | sed -nr 's/.*dev ([^\ ]+).*/\1/p')"
+MAC="$(cat /sys/class/net/$NETINT/address)"
 echo "Adresse MAC: $MAC"
 
 
@@ -111,12 +111,6 @@ sudo docker compose up -d --force-recreate
 
 # on s'assure que les commandes précédentes ont bien été enregistrées par le serveur avant de créer le tunnel
 wait
-
-# tunnel ssh pour service ssh
-# sudo -u tunnel-user ssh -Nf -R "$REMOTE_SSH_PORT:localhost:$LOCAL_SSH_PORT" tunnel-user@g3.south-squad.io -i /home/tunnel-user/.ssh/id_rsa -o StrictHostKeyChecking=no
-
-# tunnel ssh pour service home assistant
-# sudo -u tunnel-user ssh -Nf -R "$REMOTE_HA_PORT:localhost:$LOCAL_HA_PORT" tunnel-user@g3.south-squad.io -i /home/tunnel-user/.ssh/id_rsa -o StrictHostKeyChecking=no
 
 
 sudo -u tunnel-user autossh -M 0 -o "ServerAliveInterval 30" -o "ServerAliveCountMax 3" -f -N -R "$REMOTE_SSH_PORT:localhost:$LOCAL_SSH_PORT" -R ":$REMOTE_HA_PORT:localhost:$LOCAL_HA_PORT" tunnel-user@g3.south-squad.io -i /home/tunnel-user/.ssh/id_rsa -o StrictHostKeyChecking=no
