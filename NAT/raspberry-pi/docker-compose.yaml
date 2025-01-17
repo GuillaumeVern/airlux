@@ -71,7 +71,6 @@ services:
       - ./manager/:/app
     command: sh -c "pip install -r /app/requirements.txt && python /app/main.py"
     networks:
-      - dev
       - default
   script-launcher:
     image: alpine:3.14
