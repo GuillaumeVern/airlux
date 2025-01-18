@@ -44,6 +44,17 @@ sudo sed -i 's/#GatewayPorts no/GatewayPorts yes/g' /etc/ssh/sshd_config
 # redémarrage de sshd pour prendre en compte les modifications
 sudo systemctl restart sshd
 
+# récupération de la clé publique pour l'envoyer au serveur
+sudo -u tunnel-user ls -la /home/tunnel-user/.ssh
+RSA="$(sudo -i -u tunnel-user cat /home/tunnel-user/.ssh/id_rsa.pub)"
+echo "Clé publique: $RSA"
+
+# enregistrement du raspberry dans la bdd + attribution du port
+curl -X POST -H "Content-Type: application/json" -d "{\"Adresse_MAC\":\"$MAC\", \"Pub_Key\": \"$RSA\"}" http://g3.south-squad.io:8000/raspberry
+
+# enregistrement de la clé publique dans authorized_keys sur le serveur
+curl -X POST -H "Content-Type: application/json" -d "{\"Adresse_MAC\":\"$MAC\", \"Pub_Key\": \"$RSA\"}" http://g3.south-squad.io:8000/key
+
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 # if the systemd service does not exist, copy the script to the correct folder and create a systemd service for it
 
@@ -56,19 +67,6 @@ if [ ! -f /etc/systemd/system/ssh_tunnel.service ]; then
     sudo systemctl start ssh_tunnel
 fi
 
-
-# récupération de la clé publique pour l'envoyer au serveur
-sudo -u tunnel-user ls -la /home/tunnel-user/.ssh
-RSA="$(sudo -i -u tunnel-user cat /home/tunnel-user/.ssh/id_rsa.pub)"
-echo "Clé publique: $RSA"
-
-# enregistrement du raspberry dans la bdd + attribution du port
-curl -X POST -H "Content-Type: application/json" -d "{\"Adresse_MAC\":\"$MAC\", \"Pub_Key\": \"$RSA\"}" http://g3.south-squad.io:8000/raspberry
-
-# enregistrement de la clé publique dans authorized_keys sur le serveur
-curl -X POST -H "Content-Type: application/json" -d "{\"Adresse_MAC\":\"$MAC\", \"Pub_Key\": \"$RSA\"}" http://g3.south-squad.io:8000/key
-
- 
 
 # on installe docker si ce n'est pas déjà fait
 if ! [ -x "$(command -v docker)" ]; then
