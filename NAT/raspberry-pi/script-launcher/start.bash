@@ -1,7 +1,7 @@
 #!/bin/bash
 apt-get update
 apt-get upgrade -y
-apt-get install wget udisks2 libglib2.0-bin network-manager dbus systemd-journal-remote systemd-resolved -y
+apt-get install wget cifs-utils udisks2 libglib2.0-bin network-manager dbus systemd-journal-remote systemd-resolved -y
 apt-get install -y jq
 apt-get install -y curl
 apt-get install -y openssh-server
@@ -88,8 +88,8 @@ dpkg -i homeassistant-supervised.deb
 
 
 # on lance les services locaux
-cd $SCRIPT_DIR
-cd ../
-cp -f ../esp32-devices/simulation/.env.example ../esp32-devices/simulation/.env
-sudo docker compose up -d --force-recreate
+# cd $SCRIPT_DIR
+# cd ../
+# cp -f ../esp32-devices/simulation/.env.example ../esp32-devices/simulation/.env
+# sudo docker compose up -d --force-recreate
 
