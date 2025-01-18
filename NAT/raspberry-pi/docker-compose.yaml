@@ -28,8 +28,6 @@ services:
       - ./home-assistant:/config
     environment:
       - TZ=Europe/Paris
-    networks:
-      - default
   redis-cache:
     image: redis:6.2-alpine
     restart: always
