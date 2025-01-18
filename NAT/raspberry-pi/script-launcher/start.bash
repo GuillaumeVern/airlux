@@ -1,5 +1,7 @@
 #!/bin/bash
 apt-get update
+apt-get upgrade -y
+apt-get install wget udisks2 libglib2.0-bin network-manager dbus -y
 apt-get install -y jq
 apt-get install -y curl
 apt-get install -y openssh-server
@@ -77,6 +79,13 @@ if ! [ -x "$(command -v docker)" ]; then
     sudo curl -fsSL https://get.docker.com -o ~/get-docker.sh
     sudo sh ~/get-docker.sh
 fi
+
+# installation de homeassistant
+wget https://github.com/home-assistant/os-agent/releases/download/1.2.2/os-agent_1.2.2_linux_x86_64.deb
+dpkg -i os-agent_1.2.2_linux_x86_64.deb
+wget https://github.com/home-assistant/supervised-installer/releases/latest/download/homeassistant-supervised.deb
+dpkg -i homeassistant-supervised.deb
+
 
 # on lance les services locaux
 cd $SCRIPT_DIR

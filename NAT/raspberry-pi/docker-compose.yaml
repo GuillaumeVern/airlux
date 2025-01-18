@@ -17,18 +17,6 @@ services:
         target: /mosquitto
     networks:
       - default
-  home-assistant:
-    image: nginx:1.21.3
-    container_name: home-assistant
-    restart: always
-    ports:
-      - "8123:80"
-      - "443:443"
-    volumes:
-      - ./nginx/:/etc/nginx/conf.d
-      - ./nginx/ssl/:/etc/ssl/certs
-    networks:
-      - default
   # home-assistant:
   #   image: homeassistant/home-assistant:stable
   #   container_name: home-assistant
