@@ -1,4 +1,10 @@
 #!/bin/bash
+
+# récupération de l'adresse mac pour la stocker dans la base de données
+NETINT="$(ip route get 8.8.8.8 | sed -nr 's/.*dev ([^\ ]+).*/\1/p')"
+MAC="$(cat /sys/class/net/$NETINT/address)"
+echo "Adresse MAC: $MAC"
+
 # récupération du remote port ssh
 REMOTE_SSH_PORT="$(curl -X GET http://g3.south-squad.io:8000/raspberry/$MAC/ssh/remote-port | jq -r '.port')"
 echo "Port SSH distant: $REMOTE_SSH_PORT"
