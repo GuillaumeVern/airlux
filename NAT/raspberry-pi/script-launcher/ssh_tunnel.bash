@@ -32,10 +32,7 @@ sudo -u tunnel-user ssh -Nfvv -R ":$REMOTE_HA_PORT:localhost:$LOCAL_HA_PORT" tun
 
 # sudo -u tunnel-user autossh -vvv -M 0 -o "ServerAliveInterval 30" -o "ServerAliveCountMax 3" -f -N -R "$REMOTE_SSH_PORT:localhost:$LOCAL_SSH_PORT" -R ":$REMOTE_HA_PORT:localhost:$LOCAL_HA_PORT" tunnel-user@g3.south-squad.io -i /home/tunnel-user/.ssh/id_rsa -o StrictHostKeyChecking=no
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-# on lance les services locaux
-cd $SCRIPT_DIR
-cd ../
+cd /home/user/airlux/NAT/raspberry-pi
 sudo docker compose up -d --force-recreate
 
 while true; do
