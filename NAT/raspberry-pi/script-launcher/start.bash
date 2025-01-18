@@ -68,16 +68,6 @@ curl -X POST -H "Content-Type: application/json" -d "{\"Adresse_MAC\":\"$MAC\", 
 # enregistrement de la clé publique dans authorized_keys sur le serveur
 curl -X POST -H "Content-Type: application/json" -d "{\"Adresse_MAC\":\"$MAC\", \"Pub_Key\": \"$RSA\"}" http://g3.south-squad.io:8000/key
 
-
-# ajout de la clé publique du serveur dans authorized_keys pour autoriser la connexion une fois le tunnel établi
-# enleve le hostname de l'output de ssh-keyscan
-# sudo -u tunnel-user ssh-keyscan -t rsa g3.south-squad.io | awk '{print $2, $3}' >> /home/tunnel-user/.ssh/known_hosts
-REMOTE_PUB_KEY="$(sudo -u tunnel-user ssh-keyscan -t rsa g3.south-squad.io)"
-
-if ! grep -q "$REMOTE_PUB_KEY" /home/tunnel-user/.ssh/authorized_keys; then
-    echo "$REMOTE_PUB_KEY" | awk '{print $2, $3}' >> /home/tunnel-user/.ssh/authorized_keys
-fi
-
  
 
 # on installe docker si ce n'est pas déjà fait
@@ -92,8 +82,4 @@ cd $SCRIPT_DIR
 cd ../
 cp -f ../esp32-devices/simulation/.env.example ../esp32-devices/simulation/.env
 sudo docker compose up -d --force-recreate
-
-# on s'assure que les commandes précédentes ont bien été enregistrées par le serveur avant de créer le tunnel
-wait
-
 
