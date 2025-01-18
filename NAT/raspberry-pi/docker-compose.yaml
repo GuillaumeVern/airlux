@@ -87,3 +87,6 @@ volumes:
     driver: local
     name: redis-cache
 
+networks:
+  default:
+    driver: bridge
