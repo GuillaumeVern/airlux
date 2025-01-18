@@ -19,6 +19,7 @@ services:
       - default
   home-assistant:
     image: homeassistant/home-assistant:2024.12
+    network_mode: "host"
     container_name: home-assistant
     restart: always
     ports:
