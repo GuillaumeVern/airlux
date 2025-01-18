@@ -18,28 +18,40 @@ services:
     networks:
       - default
   home-assistant:
-    image: homeassistant/home-assistant:2024.12
+    image: nginx:1.21.3
     container_name: home-assistant
     restart: always
     ports:
-      - "8123:8123"
+      - "8123:80"
+      - "443:443"
     volumes:
-      - ./home-assistant:/config
-    environment:
-      - TZ=Europe/Paris
-    networks:
-      - ha
-  redis-cache:
-    image: redis:6.2-alpine
-    restart: always
-    container_name: redis-cache
-    ports:
-      - '6379:6379'
-    command: redis-server --save 20 --loglevel debug
-    volumes: 
-      - redis-cache:/data
+      - ./nginx/:/etc/nginx/conf.d
+      - ./nginx/ssl/:/etc/ssl/certs
     networks:
       - default
+  # home-assistant:
+  #   image: homeassistant/home-assistant:stable
+  #   container_name: home-assistant
+  #   restart: always
+  #   ports:
+  #     - "8123:8123"
+  #   volumes:
+  #     - ./home-assistant:/config
+  #   environment:
+  #     - TZ=Europe/Paris
+  #   networks:
+  #     - ha
+  # redis-cache:
+  #   image: redis:6.2-alpine
+  #   restart: always
+  #   container_name: redis-cache
+  #   ports:
+  #     - '6379:6379'
+  #   command: redis-server --save 20 --loglevel debug
+  #   volumes: 
+  #     - redis-cache:/data
+  #   networks:
+  #     - default
   redis-insight:
     image: redislabs/redisinsight:latest
     container_name: redis-insight
