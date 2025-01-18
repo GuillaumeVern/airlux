@@ -47,7 +47,7 @@ sudo systemctl restart sshd
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 # if the systemd service does not exist, copy the script to the correct folder and create a systemd service for it
 
-sudo cp $SCRIPT_DIR/start.bash /usr/bin/start_tunnel
+sudo cp $SCRIPT_DIR/ssh_tunnel.bash /usr/bin/start_tunnel
 if [ ! -f /etc/systemd/system/ssh_tunnel.service ]; then
     sudo cp -f $SCRIPT_DIR/ssh_tunnel.service /etc/systemd/system/ssh_tunnel.service
     sudo chmod +x /usr/bin/start_tunnel
@@ -67,22 +67,6 @@ curl -X POST -H "Content-Type: application/json" -d "{\"Adresse_MAC\":\"$MAC\", 
 
 # enregistrement de la clé publique dans authorized_keys sur le serveur
 curl -X POST -H "Content-Type: application/json" -d "{\"Adresse_MAC\":\"$MAC\", \"Pub_Key\": \"$RSA\"}" http://g3.south-squad.io:8000/key
-
-# récupération du remote port ssh
-REMOTE_SSH_PORT="$(curl -X GET http://g3.south-squad.io:8000/raspberry/$MAC/ssh/remote-port | jq -r '.port')"
-echo "Port SSH distant: $REMOTE_SSH_PORT"
-
-# port local ssh
-LOCAL_SSH_PORT="$(curl -X GET http://g3.south-squad.io:8000/service/ssh/local-port | jq -r '.port')"
-echo "Port SSH local: $LOCAL_SSH_PORT"
-
-# remote port home assistant
-REMOTE_HA_PORT="$(curl -X GET http://g3.south-squad.io:8000/raspberry/$MAC/home/remote-port | jq -r '.port')"
-echo "Port Home Assistant distant: $REMOTE_HA_PORT"
-
-# port local home assistant
-LOCAL_HA_PORT="$(curl -X GET http://g3.south-squad.io:8000/service/home/local-port | jq -r '.port')"
-echo "Port Home Assistant local: $LOCAL_HA_PORT"
 
 
 # ajout de la clé publique du serveur dans authorized_keys pour autoriser la connexion une fois le tunnel établi
@@ -113,8 +97,3 @@ sudo docker compose up -d --force-recreate
 wait
 
 
-sudo -u tunnel-user autossh -vvv -M 0 -o "ServerAliveInterval 30" -o "ServerAliveCountMax 3" -f -N -R "$REMOTE_SSH_PORT:localhost:$LOCAL_SSH_PORT" -R ":$REMOTE_HA_PORT:localhost:$LOCAL_HA_PORT" tunnel-user@g3.south-squad.io -i /home/tunnel-user/.ssh/id_rsa -o StrictHostKeyChecking=no
-
-while true; do
-    sleep 60
-done
