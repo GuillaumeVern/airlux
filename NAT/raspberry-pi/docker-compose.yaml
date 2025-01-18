@@ -19,7 +19,6 @@ services:
       - default
   home-assistant:
     image: homeassistant/home-assistant:2024.12
-    network_mode: "host"
     container_name: home-assistant
     restart: always
     ports:
@@ -28,6 +27,8 @@ services:
       - ./home-assistant:/config
     environment:
       - TZ=Europe/Paris
+    networks:
+      - default
   redis-cache:
     image: redis:6.2-alpine
     restart: always
