@@ -40,6 +40,9 @@ sudo sed -i 's/#HostKey \/etc\/ssh\/ssh_host_rsa_key/HostKey \/home\/tunnel-user
 sudo sed -i 's/# AuthorizedKeysFile/AuthorizedKeysFile/g' /etc/ssh/sshd_config
 sudo sed -i 's/#AllowTcpForwarding yes/AllowTcpForwarding yes/g' /etc/ssh/sshd_config
 sudo sed -i 's/#GatewayPorts no/GatewayPorts yes/g' /etc/ssh/sshd_config
+sudo sed -i 's/#TCPKeepAlive yes/TCPKeepAlive yes/g' /etc/ssh/sshd_config
+sudo sed -i 's/#ClientAliveInterval 0/ClientAliveInterval 30/g' /etc/ssh/sshd_config
+sudo sed -i 's/#ClientAliveCountMax 3/ClientAliveCountMax 3/g' /etc/ssh/sshd_config
 
 # redémarrage de sshd pour prendre en compte les modifications
 sudo systemctl restart sshd
