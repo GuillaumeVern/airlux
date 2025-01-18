@@ -1,3 +1,4 @@
+#!/bin/bash
 # récupération du remote port ssh
 REMOTE_SSH_PORT="$(curl -X GET http://g3.south-squad.io:8000/raspberry/$MAC/ssh/remote-port | jq -r '.port')"
 echo "Port SSH distant: $REMOTE_SSH_PORT"
