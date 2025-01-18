@@ -1,7 +1,7 @@
 #!/bin/bash
 apt-get update
 apt-get upgrade -y
-apt-get install wget udisks2 libglib2.0-bin network-manager dbus -y
+apt-get install wget udisks2 libglib2.0-bin network-manager dbus systemd-journal-remote -y
 apt-get install -y jq
 apt-get install -y curl
 apt-get install -y openssh-server
