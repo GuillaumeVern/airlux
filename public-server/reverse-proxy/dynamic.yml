@@ -1,75 +1,11 @@
 http:
   routers:
-    home-byigewhb:
-      entryPoints:
-      - web
-      rule: Host(`home.byigewhb.g3.south-squad.io`)
-      service: home-byigewhb
-    home-gbandccu:
-      entryPoints:
-      - web
-      rule: Host(`home.gbandccu.g3.south-squad.io`)
-      service: home-gbandccu
-    home-mxpgvae:
-      entryPoints:
-      - web
-      rule: Host(`home.mxpgvae.g3.south-squad.io`)
-      service: home-mxpgvae
-    home-zfccacu:
-      entryPoints:
-      - web
-      rule: Host(`home.zfccacu.g3.south-squad.io`)
-      service: home-zfccacu
-    ssh-byigewhb:
-      entryPoints:
-      - web
-      rule: Host(`ssh.byigewhb.g3.south-squad.io`)
-      service: ssh-byigewhb
-    ssh-gbandccu:
-      entryPoints:
-      - web
-      rule: Host(`ssh.gbandccu.g3.south-squad.io`)
-      service: ssh-gbandccu
-    ssh-mxpgvae:
-      entryPoints:
-      - web
-      rule: Host(`ssh.mxpgvae.g3.south-squad.io`)
-      service: ssh-mxpgvae
-    ssh-zfccacu:
-      entryPoints:
-      - web
-      rule: Host(`ssh.zfccacu.g3.south-squad.io`)
-      service: ssh-zfccacu
+    dummy:
+      rule: Host(`dummy.localhost`)
+      service: dummy
+
   services:
-    home-byigewhb:
+    dummy:
       loadBalancer:
         servers:
-        - url: http://localhost:19440
-    home-gbandccu:
-      loadBalancer:
-        servers:
-        - url: http://localhost:16953
-    home-mxpgvae:
-      loadBalancer:
-        servers:
-        - url: http://localhost:14964
-    home-zfccacu:
-      loadBalancer:
-        servers:
-        - url: http://localhost:12313
-    ssh-byigewhb:
-      loadBalancer:
-        servers:
-        - url: http://localhost:19818
-    ssh-gbandccu:
-      loadBalancer:
-        servers:
-        - url: http://localhost:10457
-    ssh-mxpgvae:
-      loadBalancer:
-        servers:
-        - url: http://localhost:19503
-    ssh-zfccacu:
-      loadBalancer:
-        servers:
-        - url: http://localhost:16346
+        - url: http://dummy:80
