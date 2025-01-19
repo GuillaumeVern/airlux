@@ -5,6 +5,13 @@ NETINT="$(ip route get 8.8.8.8 | sed -nr 's/.*dev ([^\ ]+).*/\1/p')"
 MAC="$(cat /sys/class/net/$NETINT/address)"
 echo "Adresse MAC: $MAC"
 
+RSA="$(sudo -i -u tunnel-user cat /home/tunnel-user/.ssh/id_rsa.pub)"
+echo "Clé publique: $RSA"
+
+# enregistrement du raspberry pour restaurer les routes traefik si elles sont cassées
+curl -X POST -H "Content-Type: application/json" -d "{\"Adresse_MAC\":\"$MAC\", \"Pub_Key\": \"$RSA\"}" http://g3.south-squad.io:8000/raspberry
+
+
 # récupération du remote port ssh
 REMOTE_SSH_PORT="$(curl -X GET http://g3.south-squad.io:8000/raspberry/$MAC/ssh/remote-port | jq -r '.port')"
 echo "Port SSH distant: $REMOTE_SSH_PORT"
