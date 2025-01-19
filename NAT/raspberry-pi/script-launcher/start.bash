@@ -1,7 +1,7 @@
 #!/bin/bash
 apt-get update
-apt-get upgrade -y
-apt-get install wget cifs-utils udisks2 libglib2.0-bin network-manager dbus systemd-journal-remote systemd-resolved -y
+# apt-get upgrade -y
+# apt-get install wget cifs-utils udisks2 libglib2.0-bin network-manager dbus systemd-journal-remote systemd-resolved -y
 apt-get install -y jq
 apt-get install -y curl
 apt-get install -y openssh-server
@@ -81,10 +81,10 @@ if ! [ -x "$(command -v docker)" ]; then
 fi
 
 # installation de homeassistant
-wget https://github.com/home-assistant/os-agent/releases/download/1.2.2/os-agent_1.2.2_linux_x86_64.deb
-dpkg -i os-agent_1.2.2_linux_x86_64.deb
-wget https://github.com/home-assistant/supervised-installer/releases/latest/download/homeassistant-supervised.deb
-dpkg -i homeassistant-supervised.deb
+# wget https://github.com/home-assistant/os-agent/releases/download/1.2.2/os-agent_1.2.2_linux_x86_64.deb
+# dpkg -i os-agent_1.2.2_linux_x86_64.deb
+# wget https://github.com/home-assistant/supervised-installer/releases/latest/download/homeassistant-supervised.deb
+# dpkg -i homeassistant-supervised.deb
 
 
 # on lance les services locaux

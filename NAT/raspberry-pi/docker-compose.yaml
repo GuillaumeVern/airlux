@@ -17,29 +17,29 @@ services:
         target: /mosquitto
     networks:
       - default
-  # home-assistant:
-  #   image: homeassistant/home-assistant:stable
-  #   container_name: home-assistant
-  #   restart: always
-  #   ports:
-  #     - "8123:8123"
-  #   volumes:
-  #     - ./home-assistant:/config
-  #   environment:
-  #     - TZ=Europe/Paris
-  #   networks:
-  #     - ha
-  # redis-cache:
-  #   image: redis:6.2-alpine
-  #   restart: always
-  #   container_name: redis-cache
-  #   ports:
-  #     - '6379:6379'
-  #   command: redis-server --save 20 --loglevel debug
-  #   volumes: 
-  #     - redis-cache:/data
-  #   networks:
-  #     - default
+  home-assistant:
+    image: homeassistant/home-assistant:stable
+    container_name: home-assistant
+    restart: always
+    ports:
+      - "8123:8123"
+    volumes:
+      - ./home-assistant:/config
+    environment:
+      - TZ=Europe/Paris
+    networks:
+      - default
+  redis-cache:
+    image: redis:6.2-alpine
+    restart: always
+    container_name: redis-cache
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 --loglevel debug
+    volumes: 
+      - redis-cache:/data
+    networks:
+      - default
   redis-insight:
     image: redislabs/redisinsight:latest
     container_name: redis-insight
@@ -72,6 +72,7 @@ services:
     command: sh -c "pip install -r /app/requirements.txt && python /app/main.py"
     networks:
       - default
+      # - dev
   script-launcher:
     image: alpine:3.14
     container_name: script-launcher
@@ -90,6 +91,6 @@ volumes:
 networks:
   default:
     driver: bridge
-  ha:
-    driver: bridge
-    
+  # dev:
+  #   external: true
+  #   name: dev
