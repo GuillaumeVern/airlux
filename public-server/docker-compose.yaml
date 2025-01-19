@@ -41,6 +41,7 @@ services:
       - "traefik.http.routers.timeseries-db.entrypoints=web"
   reverse-proxy:
     image: "traefik:v3.2"
+    network_mode: "host"
     container_name: "reverse-proxy"
     restart: always
     command:
@@ -58,8 +59,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./reverse-proxy/traefik.yml:/etc/traefik/traefik.yml
       - ./reverse-proxy/dynamic.yml:/etc/traefik/dynamic.yml
-    networks:
-      - public_server
   airnet-api:
     image: python:3.13
     container_name: airnet-api
