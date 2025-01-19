@@ -32,16 +32,16 @@ fi
 
 
 
-# sudo -u tunnel-user autossh -vvv -M 0 -o "ServerAliveInterval 30" -o "ServerAliveCountMax 3" -f -N -R "$REMOTE_SSH_PORT:localhost:$LOCAL_SSH_PORT" -R ":$REMOTE_HA_PORT:localhost:$LOCAL_HA_PORT" tunnel-user@g3.south-squad.io -i /home/tunnel-user/.ssh/id_rsa -o StrictHostKeyChecking=no
+sudo -u tunnel-user autossh -vvv -M 0 -o "ServerAliveInterval 30" -o "ServerAliveCountMax 3" -f -N -R "$REMOTE_SSH_PORT:localhost:$LOCAL_SSH_PORT" -R ":$REMOTE_HA_PORT:localhost:$LOCAL_HA_PORT" tunnel-user@g3.south-squad.io -i /home/tunnel-user/.ssh/id_rsa -o StrictHostKeyChecking=no
 
 # cd /home/user/airlux/NAT/raspberry-pi
 # sudo docker compose up -d --force-recreate
 
 while true; do
-    # tunnel ssh pour service ssh
-    sudo -u tunnel-user ssh -Nfvv -R "$REMOTE_SSH_PORT:localhost:$LOCAL_SSH_PORT" tunnel-user@g3.south-squad.io -i /home/tunnel-user/.ssh/id_rsa -o StrictHostKeyChecking=no
+    # # tunnel ssh pour service ssh
+    # sudo -u tunnel-user ssh -Nfvv -R "$REMOTE_SSH_PORT:localhost:$LOCAL_SSH_PORT" tunnel-user@g3.south-squad.io -i /home/tunnel-user/.ssh/id_rsa -o StrictHostKeyChecking=no
 
-    # tunnel ssh pour service home assistant
-    sudo -u tunnel-user ssh -Nfvv -R ":$REMOTE_HA_PORT:localhost:$LOCAL_HA_PORT" tunnel-user@g3.south-squad.io -i /home/tunnel-user/.ssh/id_rsa -o StrictHostKeyChecking=no
+    # # tunnel ssh pour service home assistant
+    # sudo -u tunnel-user ssh -Nfvv -R ":$REMOTE_HA_PORT:localhost:$LOCAL_HA_PORT" tunnel-user@g3.south-squad.io -i /home/tunnel-user/.ssh/id_rsa -o StrictHostKeyChecking=no
     sleep 60
 done
