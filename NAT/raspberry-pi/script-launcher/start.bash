@@ -9,7 +9,7 @@ apt-get install -y autossh
 
 # on crée l'utilisateur tunnel-user s'il n'existe pas
 # -m pour s'assurer que le répertoire home est créé
-id -u tunnel-user &>/dev/null || useradd tunnel-user -p tuiop14!! -m 
+id -u tunnel-user &>/dev/null || /sbin/useradd tunnel-user -p tuiop14!! -m 
 
 # création du répertoires nécessaires à l'authentification par clé rsa
 # on utiliser l'utilisateur tunnel-user pour éviter les problèmes de permissions
