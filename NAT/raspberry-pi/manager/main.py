@@ -2,6 +2,8 @@ from paho.mqtt import client as mqtt_client
 import random
 import time
 import logging
+import redis
+from redis.commands.json.path import Path
 from influxdb_client import InfluxDBClient
 import influxdb_client
 import json
@@ -14,6 +16,9 @@ INFLUXDB_URL = 'http://g3.south-squad.io:8086'
 INFLUXDB_TOKEN = 'oFn446lJumcISf9hSY-zpiyPtyjGyVRzsRTTZ7L3lPeLtBa_reF0USZGVM0HLCVmUT_tio0Rug1RdDsec45hsg=='
 # username = 'emqx'
 # password = 'public'
+
+REDIS_HOST = 'redis-cache'
+REDIS_PORT = 6379
 
 FIRST_RECONNECT_DELAY = 1
 RECONNECT_RATE = 2
@@ -62,6 +67,7 @@ def connect_mqtt():
 
 def subscribe_to_all(client: mqtt_client):
     inf_client = connect_influxdb()
+    red_client = connect_redis()
     def on_message(client, userdata, message):
         decoded_payload = message.payload.decode()
         decoded_payload = json.loads(decoded_payload)
@@ -76,7 +82,15 @@ def subscribe_to_all(client: mqtt_client):
             },
             "time": decoded_payload["timestamp"]
         }
-        write_to_influxdb(inf_client, data)
+        if inf_client.ping():
+            for key in red_client.scan_iter("*"):
+                result = red_client.json().get(key)
+                if result:
+                    backup_data = json.loads(result.decode('utf-8'))
+                    write_to_influxdb(inf_client, backup_data[1])
+            write_to_influxdb(inf_client, data)
+        else:
+            write_to_redis(red_client, data)
 
     client.subscribe('#')
     client.on_message = on_message
@@ -91,6 +105,14 @@ def write_to_influxdb(inf_client: InfluxDBClient, data):
     write_api.write(bucket='raspberry', record=record, org='docs')
     print(f"Data written to InfluxDB: {record}")
 
+def connect_redis():
+    red_client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, decode_responses=True)
+    return red_client
+
+def write_to_redis(red_client: redis.Redis, data):
+    key = data["fields"]["mac"] + '_' + data["time"]
+    record = red_client.json().set(key, Path.root_path(), data)
+    print(f"Data written to Redis: {record}")
 
 
 mqtt_client = connect_mqtt()
