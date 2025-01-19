@@ -8,4 +8,4 @@ http:
     dummy:
       loadBalancer:
         servers:
-        - url: http://dummy:80
+        - url: http://dummy:80/

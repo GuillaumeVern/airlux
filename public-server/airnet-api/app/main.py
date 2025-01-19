@@ -266,7 +266,7 @@ def add_traefik_route(prefixe: str, ports_distants: list):
             data["http"]["services"][f"{service_name}-{prefixe}"] = {
                 "loadBalancer": {
                     "servers": [
-                        {"url": f"http://localhost:{port_distant}"}
+                        {"url": f"http://localhost:{port_distant}/"}
                     ]
                 }
             }
