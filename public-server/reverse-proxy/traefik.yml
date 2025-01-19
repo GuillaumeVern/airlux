@@ -19,3 +19,11 @@ entryPoints:
     address: ":80"
   websecure:
     address: ":443"
+
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      tlsChallenge: {}
+      caServer: https://acme-staging-v02.api.letsencrypt.org/directory
+      email: guiguidu82@laposte.net
+      storage: /letsencrypt/acme.json

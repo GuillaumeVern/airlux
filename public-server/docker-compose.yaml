@@ -49,7 +49,7 @@ services:
       - "--api.insecure=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
-      - "--entryPoints.web.address=:80"
+      - "--entryPoints.websecure.address=:443"
       - "--configfile=/etc/traefik/traefik.yml"
     ports:
       - "80:80"
@@ -59,6 +59,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./reverse-proxy/traefik.yml:/etc/traefik/traefik.yml
       - ./reverse-proxy/dynamic.yml:/etc/traefik/dynamic.yml
+      - ./reverse-proxy/letsencrypt:/letsencrypt
   airnet-api:
     image: python:3.13
     container_name: airnet-api

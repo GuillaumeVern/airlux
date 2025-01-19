@@ -261,7 +261,8 @@ def add_traefik_route(prefixe: str, ports_distants: list):
             data["http"]["routers"][f"{service_name}-{prefixe}"] = {
                 "rule": f"Host(`{service_name}.{prefixe}.g3.south-squad.io`)",
                 "service": f"{service_name}-{prefixe}",
-                "entryPoints": ["web"],
+                "entryPoints": ["websecure"],
+                "tls": {"certResolver": "letsencrypt"}
             }
             data["http"]["services"][f"{service_name}-{prefixe}"] = {
                 "loadBalancer": {
