@@ -4,8 +4,13 @@ from pydantic import BaseModel
 import requests
 from fastapi.responses import JSONResponse
 from random import randint
+import yaml
+import logging
 
 import mysql.connector
+
+logger = logging.getLogger('uvicorn.error')
+logger.setLevel(logging.DEBUG)
 
 
 class Raspberry(BaseModel):
@@ -162,10 +167,24 @@ def get_free_prefixe():
 def create_raspberry(raspberry: Raspberry, request: Request):
     raspberry.Adresse_MAC = format_mac(raspberry.Adresse_MAC)
     isPresent = get_raspberry(raspberry.Adresse_MAC)
-    if isPresent != False:
-        return JSONResponse(content={"message": "Raspberry already exists"}, status_code=409)
     try:
         cursor = db.cursor(prepared=True)
+        if isPresent != False:
+            # configuration de traefik
+            ports_distants = []
+            id_raspberry = isPresent[0]
+            cursor.execute("SELECT * FROM Raspberry_has_Service WHERE Id_Raspberry = %s", (id_raspberry,))
+            services = cursor.fetchall()
+            for service in services:
+                # on fait une liste de tous les ports distants exposés par un tunnel ssh
+                ports_distants.append(service[2])
+                
+            prefixe = isPresent[3]
+            assert prefixe is not None
+            add_traefik_route(prefixe, ports_distants)
+            return JSONResponse(content={"message": "Raspberry already exists"}, status_code=409)
+        
+        
         prefixe = get_free_prefixe()
         cursor.execute("INSERT INTO Raspberry (Adresse_MAC, Adresse_ip, Prefixe) VALUES (%s, %s, %s)", (raspberry.Adresse_MAC, request.client.host, prefixe))
         db.commit()
@@ -174,7 +193,8 @@ def create_raspberry(raspberry: Raspberry, request: Request):
         post_rsa(raspberry, request)
 
         # id du raspberry
-        id_raspberry = get_raspberry(raspberry.Adresse_MAC)[0]
+        dbraspberry = get_raspberry(raspberry.Adresse_MAC)
+        id_raspberry = dbraspberry[0]
 
         # enregistrement des services
         cursor.execute("SELECT * FROM Service")
@@ -186,6 +206,15 @@ def create_raspberry(raspberry: Raspberry, request: Request):
                 db.commit()
 
         # configuration de traefik
+        ports_distants = []
+        cursor.execute("SELECT * FROM Raspberry_has_Service WHERE Id_Raspberry = %s", (id_raspberry,))
+        services = cursor.fetchall()
+        for service in services:
+            # on fait une liste de tous les ports distants exposés par un tunnel ssh
+            ports_distants.append(service[2])
+            
+        prefixe = dbraspberry[3]
+        add_traefik_route(prefixe, ports_distants)
         
 
         return JSONResponse(content={"message": "Raspberry created successfully"}, status_code=201)
@@ -209,3 +238,58 @@ def format_mac(mac: str):
     mac = mac.replace("-", ":")
     mac = mac.replace("%3a", ":")
     return mac
+
+def load_dynamic_config_file():
+    try:
+        with open("/app/app/dynamic.yml", "r") as stream:
+            try:
+                data = yaml.safe_load(stream)
+                stream.close()
+                if data is None:
+                    data = {"http": {"routers": {}, "services": {}}}
+                return data
+            except yaml.YAMLError as exc:
+                return JSONResponse(content={"message": exc}, status_code=500)
+    except Exception as e:
+        return JSONResponse(content={"message": e}, status_code=500)
+    
+def add_traefik_route(prefixe: str, ports_distants: list):
+    try:
+        data = load_dynamic_config_file()
+        for port_distant in ports_distants:
+            service_name = get_service_name(port_distant)
+            data["http"]["routers"][f"{service_name}-{prefixe}"] = {
+                "rule": f"Host(`{service_name}.{prefixe}.g3.south-squad.io`)",
+                "service": f"{service_name}-{prefixe}",
+                "entryPoints": ["web"],
+            }
+            data["http"]["services"][f"{service_name}-{prefixe}"] = {
+                "loadBalancer": {
+                    "servers": [
+                        {"url": f"http://localhost:{port_distant}"}
+                    ]
+                }
+            }
+        file = open("/app/app/dynamic.yml", "w")
+        yaml.dump(data, file)
+    except Exception as e:
+        return JSONResponse(content={"message": e}, status_code=500)
+
+def get_service_name(port_distant: int):
+    try:
+        cursor = db.cursor(prepared=True)
+        cursor.execute("SELECT Id_Service FROM Raspberry_has_Service WHERE Remote_Port = %s", (port_distant,))
+        result = cursor.fetchall()
+
+        if (len(result) < 1):
+            return False
+
+        cursor.execute("SELECT Prefixe FROM Service WHERE Id_Service = %s", (result[0][0],))
+        result = cursor.fetchall()
+
+        if (len(result) < 1):
+            return False
+        return result[0][0]
+    except Exception as e:
+        db.reconnect(attempts=1, delay=0)
+        return JSONResponse(content={"message": e}, status_code=500)

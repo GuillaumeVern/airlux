@@ -2,3 +2,5 @@ fastapi[standard]
 mysql-connector-python
 requests
 pydantic
+pyYAML
+logging

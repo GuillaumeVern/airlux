@@ -49,12 +49,15 @@ services:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entryPoints.web.address=:80"
+      - "--configfile=/etc/traefik/traefik.yml"
     ports:
       - "80:80"
-      - "8082:8080"
+      - "8080:8080"
     volumes:
       - reverse-proxy_data:/etc/traefik
       - /var/run/docker.sock:/var/run/docker.sock
+      - ./reverse-proxy/traefik.yml:/etc/traefik/traefik.yml
+      - ./reverse-proxy/dynamic.yml:/etc/traefik/dynamic.yml
     networks:
       - public_server
   airnet-api:
@@ -65,9 +68,11 @@ services:
       - 8000:8000
     volumes:
       - ./airnet-api/:/app
+      - ./reverse-proxy/dynamic.yml:/app/app/dynamic.yml
     networks:
       - public_server
       - private_server
+      # - dev
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.airnet-api.rule=Host(`airnet-api.localhost`)"
