@@ -88,8 +88,8 @@ fi
 
 
 # on lance les services locaux
-# cd $SCRIPT_DIR
-# cd ../
-# cp -f ../esp32-devices/simulation/.env.example ../esp32-devices/simulation/.env
-# sudo docker compose up -d --force-recreate
+cd $SCRIPT_DIR
+cd ../
+cp -f ../esp32-devices/simulation/.env.example ../esp32-devices/simulation/.env
+sudo docker compose up -d --force-recreate
 
