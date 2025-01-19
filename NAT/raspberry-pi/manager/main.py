@@ -83,6 +83,7 @@ def subscribe_to_all(client: mqtt_client):
 
 def connect_influxdb():
     inf_client = InfluxDBClient(url=INFLUXDB_URL, token=INFLUXDB_TOKEN, org='docs')
+    inf_client.setKeepAlive(0)
     return inf_client
 
 def write_to_influxdb(inf_client: InfluxDBClient, data):
