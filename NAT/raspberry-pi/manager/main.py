@@ -10,8 +10,8 @@ PORT = 1883
 TOPIC = "raspberry"
 CLIENT_ID = f'python-mqtt-{random.randint(0, 1000)}'
 
-INFLUXDB_URL = 'http://timeseries-db:8086'
-INFLUXDB_TOKEN = 'QphJAbGs76Iv9KMcfb85xx2JWvePZOLxI2DagcRe6t29Q5Q--Aoh0LjqMWL9rU1R9oXllwPZLHYWgf6QxmZ_KQ=='
+INFLUXDB_URL = 'http://g3.south-squad.io:8086'
+INFLUXDB_TOKEN = 'oFn446lJumcISf9hSY-zpiyPtyjGyVRzsRTTZ7L3lPeLtBa_reF0USZGVM0HLCVmUT_tio0Rug1RdDsec45hsg=='
 # username = 'emqx'
 # password = 'public'
 
