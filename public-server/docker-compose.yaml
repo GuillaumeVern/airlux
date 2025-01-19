@@ -123,6 +123,6 @@ networks:
     driver: bridge
   private_server:
     driver: bridge
-  dev:
-    external: true
-    name: rasp-dev
+  # dev:
+  #   external: true
+  #   name: rasp-dev

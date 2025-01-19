@@ -72,7 +72,7 @@ services:
     command: sh -c "pip install -r /app/requirements.txt && python /app/main.py"
     networks:
       - default
-      - rasp-dev
+      # - rasp-dev
   script-launcher:
     image: alpine:3.14
     container_name: script-launcher
@@ -92,7 +92,5 @@ volumes:
 networks:
   default:
     driver: bridge
-  rasp-dev:
-    driver: bridge
-  ha:
-    driver: bridge
+  # rasp-dev:
+  #   driver: bridge
