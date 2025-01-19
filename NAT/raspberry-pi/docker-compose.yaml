@@ -18,7 +18,7 @@ services:
     networks:
       - default
   home-assistant:
-    image: homeassistant/home-assistant:stable
+    image: homeassistant/home-assistant:2024.12
     container_name: home-assistant
     restart: always
     ports:
@@ -30,13 +30,13 @@ services:
     networks:
       - default
   redis-cache:
-    image: redis:6.2-alpine
+    image: redis/redis-stack-server
     restart: always
     container_name: redis-cache
     ports:
       - '6379:6379'
-    command: redis-server --save 20 --loglevel debug
-    volumes: 
+    command: redis-server --save 20 1 --loglevel debug --protected-mode no --loadmodule /opt/redis-stack/lib/rejson.so
+    volumes:
       - redis-cache:/data
     networks:
       - default
@@ -72,7 +72,7 @@ services:
     command: sh -c "pip install -r /app/requirements.txt && python /app/main.py"
     networks:
       - default
-      # - dev
+      - rasp-dev
   script-launcher:
     image: alpine:3.14
     container_name: script-launcher
@@ -88,9 +88,11 @@ volumes:
     driver: local
     name: redis-cache
 
+
 networks:
   default:
     driver: bridge
-  # dev:
-  #   external: true
-  #   name: dev
+  rasp-dev:
+    driver: bridge
+  ha:
+    driver: bridge
