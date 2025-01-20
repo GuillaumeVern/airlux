@@ -1,5 +1,7 @@
 #!/bin/bash
 
+sleep 60
+
 # récupération de l'adresse mac pour la stocker dans la base de données
 NETINT="$(ip route get 8.8.8.8 | sed -nr 's/.*dev ([^\ ]+).*/\1/p')"
 MAC="$(cat /sys/class/net/$NETINT/address)"
