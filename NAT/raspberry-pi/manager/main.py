@@ -83,11 +83,11 @@ def subscribe_to_all(client: mqtt_client):
             "time": decoded_payload["timestamp"]
         }
         if inf_client.ping():
-            for key in red_client.scan_iter("*"):
-                result = red_client.json().get(key)
-                if result:
-                    backup_data = json.loads(result.decode('utf-8'))
-                    write_to_influxdb(inf_client, backup_data[1])
+            # for key in red_client.scan_iter("*"):
+            #     result = red_client.json().get(key)
+            #     if result:
+            #         backup_data = json.loads(result.decode('utf-8'))
+            #         write_to_influxdb(inf_client, backup_data[1])
             write_to_influxdb(inf_client, data)
         else:
             write_to_redis(red_client, data)
