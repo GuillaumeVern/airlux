@@ -22,8 +22,8 @@ REDIS_PORT = 6379
 
 FIRST_RECONNECT_DELAY = 1
 RECONNECT_RATE = 2
-MAX_RECONNECT_COUNT = 12
-MAX_RECONNECT_DELAY = 60
+MAX_RECONNECT_COUNT = 99999999
+MAX_RECONNECT_DELAY = 30
 
 def connect_mqtt():
     def on_connect(client, userdata, flags, rc):
@@ -37,7 +37,7 @@ def connect_mqtt():
     def on_disconnect(client, userdata, rc):
         logging.info("Disconnected with result code: %s", rc)
         reconnect_count, reconnect_delay = 0, FIRST_RECONNECT_DELAY
-        while reconnect_count < MAX_RECONNECT_COUNT:
+        while reconnect_count < MAX_RECONNECT_COUNT and not client.is_connected():
             logging.info("Reconnecting in %d seconds...", reconnect_delay)
             time.sleep(reconnect_delay)
 
