@@ -1,14 +1,12 @@
 http:
   routers:
-    # bll:
-    #   entrypoints:
-    #     - "websecure"
-    #   rule: "Host(`my.domain.com`)"
-    #   tls: 
-    #     certResolver: myresolver
-    #   service: bll
+    dummy:
+      rule: Host(`dummy.localhost`)
+      service: dummy
+
   services:
-    # bll:
-    #   loadBalancer:
-    #     servers:
-    #     - url: "http://192.168.112.2:4000"
+    dummy:
+      loadBalancer:
+        servers:
+        - url: http://dummy:80/
+
