@@ -82,7 +82,7 @@ def subscribe_to_all(client: mqtt_client):
             },
             "time": decoded_payload["timestamp"]
         }
-        if inf_client.ping():
+        if client.is_connected():
             for key in red_client.scan_iter():
                 result = red_client.json().get(key)
                 red_client.delete(key)
