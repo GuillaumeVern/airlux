@@ -12,8 +12,8 @@ PORT = 1883
 TOPIC = "raspberry"
 CLIENT_ID = f'python-mqtt-{random.randint(0, 1000)}'
 
-INFLUXDB_URL = 'http://g3.south-squad.io:8086'
-INFLUXDB_TOKEN = 'oFn446lJumcISf9hSY-zpiyPtyjGyVRzsRTTZ7L3lPeLtBa_reF0USZGVM0HLCVmUT_tio0Rug1RdDsec45hsg=='
+INFLUXDB_URL = 'http://timeseries-db:8086' #'http://g3.south-squad.io:8086'
+INFLUXDB_TOKEN = 'vmz7HmKYyw3titaT8wtLpq6F_saDgk3s0HhFJxGikPRPDrzTSB68VTZ43ux_5ihe-FkbKrNf4cCkE1ndpl2klg==' #'oFn446lJumcISf9hSY-zpiyPtyjGyVRzsRTTZ7L3lPeLtBa_reF0USZGVM0HLCVmUT_tio0Rug1RdDsec45hsg=='
 # username = 'emqx'
 # password = 'public'
 
@@ -83,11 +83,11 @@ def subscribe_to_all(client: mqtt_client):
             "time": decoded_payload["timestamp"]
         }
         if inf_client.ping():
-            # for key in red_client.scan_iter("*"):
-            #     result = red_client.json().get(key)
-            #     if result:
-            #         backup_data = json.loads(result.decode('utf-8'))
-            #         write_to_influxdb(inf_client, backup_data[1])
+            for key in red_client.scan_iter():
+                result = red_client.json().get(key)
+                red_client.delete(key)
+                if result:
+                    write_to_influxdb(inf_client, result)
             write_to_influxdb(inf_client, data)
         else:
             write_to_redis(red_client, data)
