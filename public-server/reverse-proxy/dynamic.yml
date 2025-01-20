@@ -3,30 +3,10 @@ http:
     dummy:
       rule: Host(`dummy.localhost`)
       service: dummy
-    home-zfccacu:
-      entryPoints:
-      - websecure
-      rule: Host(`home.zfccacu.g3.south-squad.io`)
-      service: home-zfccacu
-      tls:
-        certResolver: letsencrypt
-    ssh-zfccacu:
-      entryPoints:
-      - websecure
-      rule: Host(`ssh.zfccacu.g3.south-squad.io`)
-      service: ssh-zfccacu
-      tls:
-        certResolver: letsencrypt
+
   services:
     dummy:
       loadBalancer:
         servers:
         - url: http://dummy:80/
-    home-zfccacu:
-      loadBalancer:
-        servers:
-        - url: http://localhost:12313/
-    ssh-zfccacu:
-      loadBalancer:
-        servers:
-        - url: http://localhost:16346/
+
