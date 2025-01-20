@@ -13,7 +13,7 @@ TOPIC = "raspberry"
 CLIENT_ID = f'python-mqtt-{random.randint(0, 1000)}'
 
 INFLUXDB_URL = 'http://g3.south-squad.io:8086'
-INFLUXDB_TOKEN = 'vmz7HmKYyw3titaT8wtLpq6F_saDgk3s0HhFJxGikPRPDrzTSB68VTZ43ux_5ihe-FkbKrNf4cCkE1ndpl2klg==' #'oFn446lJumcISf9hSY-zpiyPtyjGyVRzsRTTZ7L3lPeLtBa_reF0USZGVM0HLCVmUT_tio0Rug1RdDsec45hsg=='
+INFLUXDB_TOKEN = 'oFn446lJumcISf9hSY-zpiyPtyjGyVRzsRTTZ7L3lPeLtBa_reF0USZGVM0HLCVmUT_tio0Rug1RdDsec45hsg=='
 # username = 'emqx'
 # password = 'public'
 
