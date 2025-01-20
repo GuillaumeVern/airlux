@@ -82,8 +82,6 @@ def subscribe_to_all(client: mqtt_client):
             },
             "time": decoded_payload["timestamp"]
         }
-        printf(inf_client.ping())
-        printf(inf_client.health())
         if inf_client.health().status == 'passing':
             for key in red_client.scan_iter():
                 result = red_client.json().get(key)
